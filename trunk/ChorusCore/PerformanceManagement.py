@@ -20,4 +20,4 @@ class Performance_Result:
         cls.data.append(Performance_Object(name, status, detail, time_taken))
         cls.number += 1
         
-a=1
+a=10
