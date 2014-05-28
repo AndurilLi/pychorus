@@ -31,7 +31,7 @@ will change default.cfg file MYENV section key Scope value to "Sanity,Regression
 >>assertText(name, content, levels, logic)
 ```
 ##Useful Tips
-1. chorusrun --color
+1. chorusrun --color\n
 It will give a colorful logs in command line, based on different log level.
 2. chorusrun -e MYENV
 It will reload the environment to MYENV, and related keys in MYENV section will be reloaded in configinfo
@@ -40,13 +40,13 @@ It will reload the environment to MYENV, and related keys in MYENV section will 
 5. You may use "from ChorusCore import Utils" to import some common useful functions
 6. ChorusCore.APIManagement and ChorusCore.DBOperation will provide HTTPAPI and MySQL basic functions support
 7. You may create Performance report by below lines:
+```
+>>from ChorusCore.PerformanceManagement import Performance_Result
+>>Performance_Result.add(name, status, detail, time_taken)
+```
+If there Performance_Result.data is not empty, then it will generate Performance.html in the Output folder
 
-    >>from ChorusCore.PerformanceManagement import Performance_Result
-    >>Performance_Result.add(name, status, detail, time_taken)
-
-  If there Performance_Result.data is not empty, then it will generate Performance.html in the Output folder
-
-8. You may generate your own log file by below lines:
+8.. You may generate your own log file by below lines:
 ```
 >>from ChorusCore.ProjectConfiguration import ProjectConfiguration
 >>from ChorusCore.LogServer import Level
