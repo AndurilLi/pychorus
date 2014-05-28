@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='ISO-8859-2' ?>
+<testsuites>
+{% for suite_name, suite_result in result.suites.iteritems() %}
+	<testsuite name="{{ suite_result.name }}" tests="{{ suite_result.passed_cases }}" assertions="{{ suite_result.case_number }}" failures="{{ suite_result.failed_cases }}" errors="{{ suite_result.crash_cases }}" time="{{ suite_result.time_taken }}" >
+	{% for case_name, case_result in suite_result.cases.iteritems() %}
+		{% if case_result.status == "Failed" or case_result.status == "Crashed" %}
+		<testcase name='{{ case_result.name }}' time='{{ case_result.time_taken }}'>
+			<failure>Please see the html report for details.</failure>
+		</testcase>
+		{% else %}
+		<testcase name='{{ case_result.name }}' time='{{ case_result.time_taken }}'/>
+		{% endif %}
+	{% endfor %}
+	</testsuite>
+{% endfor %}
+</testsuites>

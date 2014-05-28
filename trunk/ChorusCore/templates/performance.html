@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>
+<html lang="en">
+<head>
+    <link media="all" href="Static/jquery.treeview.css" type="text/css" rel="stylesheet" />
+    <title>Performance Report</title>
+    <script src="Static/jquery.js" type="text/javascript"></script>
+	
+    <link rel="stylesheet" href="Static/prettyPhoto/css/prettyPhoto.css" type="text/css" media="screen" title="prettyPhoto main stylesheet" charset="utf-8" />
+	<script src="Static/prettyPhoto/js/jquery.prettyPhoto.js" type="text/javascript" charset="utf-8"></script>
+
+    <script type='text/javascript' src='Static/jsondiff/jsondiffpatch.js'></script>
+    <script type='text/javascript' src='Static/jsondiff/jsondiffpatch.html.js'></script>
+    <script type='text/javascript' src='Static/jsondiff/diff_match_patch_uncompressed.js'></script>
+	<link rel="stylesheet" href="Static/jsondiff/jsondiffpatch.html.css" type="text/css" />
+	<script language="javascript"> </script>
+</head>
+<body>
+    <script>
+    	$(document).ready(function(){
+    		$("#browser").treeview({collapsed: true,toggle: function() {console.log("%s was toggled.",$(this).find(">span").text());}});
+    		$(".fullImg").hide();
+    		$(".TextCellShow").hide();
+            $(".TextCellHidden").click(function(){
+                $(this).parents("td.TextCell").parents("tr.TextRow").children("td.TextCell").children(".TextCellShow").show();
+                $(this).parents("td.TextCell").parents("tr.TextRow").children("td.TextCell").children(".TextCellHidden").hide();
+            });
+            $(".TextCellShow").click(function(){
+                $(this).parents("td.TextCell").parents("tr.TextRow").children("td.TextCell").children(".TextCellHidden").show();
+                $(this).parents("td.TextCell").parents("tr.TextRow").children("td.TextCell").children(".TextCellShow").hide();
+            });
+			
+            $("area[rel^='prettyPhoto']").prettyPhoto();
+			$(".gallery:first a[rel^='prettyPhoto']").prettyPhoto({social_tools:false, animation_speed:'normal',theme:'facebook',slideshow:3000, autoplay_slideshow: false});
+			$(".gallery:gt(0) a[rel^='prettyPhoto']").prettyPhoto({social_tools:false, animation_speed:'normal',theme:'facebook',slideshow:3000, autoplay_slideshow: false});
+       	});
+    	function displayJson(objContent, diffContent, category){
+   			var initInput = objContent;
+			try{
+				var detail = diffContent;
+				{
+					for (var outerIndex in Object.keys(detail[category]))
+					{
+						var item = Object.keys(detail[category])[outerIndex];
+						for (var innerIndex in Object.keys(detail[category][item]))
+						{
+							highkey = Object.keys(detail[category][item])[innerIndex];
+							var tem=initInput[item][highkey];
+							initInput[item][highkey]="<span style='background-color: yellow;'>"+tem+"</span>";
+						}
+					}
+				}
+			}
+			catch(err){
+				var duration = JSON.stringify(initInput, null, 4);
+				return duration;
+			}
+   				//document.write(duration);
+			var duration = JSON.stringify(initInput, null, 4);
+   			return duration;
+    	}
+    </script>
+    <br />
+	<div class="align_center">
+	    <h1 id="banner">Performance Result</h1>
+	    <div id="main">
+	        <div id="summary"> <!-- summary infos about test suite: including case number. passed, failed and crashed numbers -->
+                <h3>Obj Number: {{ earesult.number }}</h3>
+            </div>
+            <div id="detail"> <!-- detail of test case result, display all the checkpoint -->
+	        <ul class="filetree treeview-famfamfam" id="browser">
+            	<ul>
+	                <li>
+	                    <table class="table" width=500px>
+	                    	<tr>
+	                    		<th width=47%>Name</th>
+	                    		<th width=30%>Detail</th>
+	                    		<th width=8%>Status</th>
+	                    		<th width=15%>Time Taken(ms)</th>
+	                    	</tr>
+	                    	{% for obj_result in earesult.data %}
+	                        <tr class="TextRow">
+				                <td width=47%>{{obj_result.name}}</td>
+				                <td class="TextCell" width=30%>
+			                       <div class="TextCellHidden" style="font-size:100%">click me</div>
+			                       <div class="TextCellShow">
+			                        <pre>
+			                         <ul><script>var theInput = {{ obj_result.detail}};var duration = JSON.stringify(theInput, null, 4);document.write(duration);</script></ul>   
+      								</pre>
+								   </div>												
+			                    </td>
+                                <td width=8%>{{obj_result.status}}</td>
+                                <td width=15%>{{obj_result.time_taken}}</td>
+				             </tr>
+	                        {% endfor %}
+	                    </table>
+	                </li>
+                    <li class="hidden">
+	                </li>
+	            </ul>
+	    	</div>
+	    
+	   	</div>
+        <p><br></p> <!--add <br> for Firefox-->
+	    
+	    <div id="container">
+	    <div id="footer">
+	        <span>Reported by Chorus</span>
+	    </div>
+	</div>
+  </div>
+</body>
+</html>

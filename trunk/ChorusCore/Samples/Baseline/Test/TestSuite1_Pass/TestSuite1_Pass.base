@@ -1,0 +1,27 @@
+{
+  "testC01_pass": {
+    "A01_Compare_Bool": "True", 
+    "A02_Compare_Data_With_Baseline": {
+      "data": "I like chorus"
+    }, 
+    "A03_Compare_Photo_With_Baseline": {
+      "image_name": "testC01_pass_A01_Compare_Photo_With_Baseline", 
+      "image_type": "png"
+    }, 
+    "A04_HttpCompare_With_Baseline": {
+      "data": {
+        "weatherinfo": {
+          "city": "\u5317\u4eac", 
+          "cityid": "101010100", 
+          "img1": "n2.gif", 
+          "img2": "d2.gif", 
+          "ptime": "18:00", 
+          "temp1": "10\u2103", 
+          "temp2": "19\u2103", 
+          "weather": "\u9634"
+        }
+      }, 
+      "status": "200"
+    }
+  }
+}

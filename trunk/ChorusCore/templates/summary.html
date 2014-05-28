@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>
+<html lang="en">
+	<head>
+	    <link media="all" href="Static/jquery.treeview.css" type="text/css" rel="stylesheet" />
+	    <title>Test Summary</title>
+	    <script src="Static/jquery.js" type="text/javascript"></script>
+	</head>
+	<body>
+	    <script>$(document).ready(function(){$("#browser").treeview({collapsed: true,toggle: function() {console.log("%s was toggled.",$(this).find(">span").text());}});});</script>
+	    <br />
+	    <div class="align_center">
+	        <h1 id="banner">Test Summary</h1>
+	            <div id="main">
+		            <div id="summary">
+		            	<h3>Test scopes: {{ result.scope_info}}</h3>
+                        <h3>Suite Number: {{ result.suite_number }}</h3>
+                        <h3>Case Number: {{ result.case_number }}</h3>
+                        <h3>Assertion Number: {{ result.assertion_number }}</h3>
+				        <h3>Number of passed suites: {{ result.passed_suites }}</h3>
+				        <h3>Number of failed suites: {{ result.failed_suites }}</h3>
+				        <h3>Number of crashed suites: {{ result.crash_suites }}</h3>
+				        <h3>Time taken: {{ result.time_taken }}</h3>
+				        {% if not result.baseline_status %}
+				        	<h3>New baseline generated: {{ not result.baseline_status }}</h3>
+				        {% endif %}
+				    </div> 
+		            
+		            <ul class="filetree treeview-famfamfam" id="browser">
+                        <!-- List of Suites test result -->
+		                <li>
+		                    <table class="table" width=500px>
+		                    	<tr>
+		                    		<th width=50%>Suite Name</th>
+		                    		<th width=30%>Suite Status</th>
+		                    		<th width=20%>New Baseline Found</th>
+		                    	</tr>
+		                    	{% for suite_name,suite_result in result.suites.iteritems() %}
+		                        <tr>
+		                            <th width=50%>
+                                        <a href={{suite_result.name}}.html>{{ suite_result.name }}</a>
+		                			</th>
+			                        {% if not suite_result.statusflag %}
+	                                    <th class="red" width=20%>{{ suite_result.status }}</th>
+	                                {% else %}
+	                                    <th class="green" width=20%>{{ suite_result.status }}</th>
+	                                {% endif %}
+	                                {% if suite_result.baseline_status %}
+	                                	<th class="green" width=20%>No</th>
+	                                {% else %}
+	                                	<th class="red" width=20%>Yes, please run it again</th>
+	                                {% endif %}
+		                        </tr>
+		                        {% endfor %}
+		                    </table>
+		                </li>
+	                    <li class="hidden">
+		                </li>
+		            </ul>
+		        </div>
+		        <div id="container">
+		    <div id="footer">
+		        <span>Reported by Chorus</span>
+		    </div>
+		</div>
+	</body>
+</html>
