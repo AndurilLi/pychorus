@@ -19,3 +19,5 @@ class Performance_Result:
     def add(cls, name, status, detail, time_taken):
         cls.data.append(Performance_Object(name, status, detail, time_taken))
         cls.number += 1
+        
+a=1
