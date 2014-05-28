@@ -299,4 +299,7 @@ def parse_description(description):
 def round_sig(x, sig = 3):
     '''return by default 3 significant digit number'''
     from math import log10, floor
-    return round(x, sig - int(floor(log10(abs(x))))-1)
+    try:
+        return round(x, sig - int(floor(log10(abs(x))))-1)
+    except:
+        return 0

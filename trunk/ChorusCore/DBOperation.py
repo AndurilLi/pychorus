@@ -46,7 +46,7 @@ def set_base_db_info(db_config, keep_connection = True):
         ChorusGlobals.get_logger().critical("Errors %s in db_info format: %s" % (str(e),str(db_info)))
         raise Exception("Errors %s in db_info format: %s" % (str(e),str(db_info)))
 
-def __close_connection(db_handler = None):
+def close_connection(db_handler = None):
     if not db_handler:
         db_handler = default_handler
     cursor = db_handler.cursor()   
