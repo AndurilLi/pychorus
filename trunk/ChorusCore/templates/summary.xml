@@ -1,16 +1,38 @@
 <?xml version='1.0' encoding='ISO-8859-2' ?>
-<testsuites>
+<project status='{{ result.status }}' scope='{{ result.scope_info }}' suitenumber='{{ result.suite_number }}'
+	casenumber='{{ result.case_number }}' assertionnumber='{{ result.assertion_number }}'
+	passsuites='{{ result.passed_suites }}' failsuites='{{ result.failed_suites }}'
+	crashsuites='{{ result.crash_suites }}' newbaseline='{{ not result.baseline_status }}'
+	time='{{ result.time_taken }}'>
 {% for suite_name, suite_result in result.suites.iteritems() %}
-	<testsuite name="{{ suite_result.name }}" tests="{{ suite_result.passed_cases }}" assertions="{{ suite_result.case_number }}" failures="{{ suite_result.failed_cases }}" errors="{{ suite_result.crash_cases }}" time="{{ suite_result.time_taken }}" >
+	<testsuite name='{{ suite_result.name }}' status='{{ suite_result.status }}' 
+		total='{{ suite_result.case_number }}'  pass='{{ suite_result.passed_cases }}' 
+		failures='{{ suite_result.failed_cases }}' errors='{{ suite_result.crash_cases }}' 
+		newbaseline='{{ not suite_result.baseline_status }}' time='{{ suite_result.time_taken }}' >
+	{% if suite_result.fail_message %}
+		<crash type='{{ suite_result.fail_message.type }}'>
+			<content>{{suite_result.fail_message.content}}</content>
+			<location>{{suite_result.fail_message.line_info}}</location>
+		</crash>
+	{% endif %}
 	{% for case_name, case_result in suite_result.cases.iteritems() %}
-		{% if case_result.status == "Failed" or case_result.status == "Crashed" %}
-		<testcase name='{{ case_result.name }}' time='{{ case_result.time_taken }}'>
-			<failure>Please see the html report for details.</failure>
+		<testcase name='{{ case_result.name }}' status='{{ case_result.status }}' 
+			total='{{ case_result.assertion_number }}' pass='{{ case_result.passed_assertions }}' 
+			failures='{{ case_result.failed_assertions }}' newbaseline='{{ not case_result.baseline_status }}' 
+			time='{{ case_result.time_taken }}'>
+			{% if case_result.status == "Crashed" %}
+				<crash type='{{ case_result.fail_message.type }}'>
+					<content>{{case_result.fail_message.content}}</content>
+					<location>{{case_result.fail_message.line_info}}</location>
+				</crash>
+			{% endif %}
+			{% for assertion_name, assertion_result in case_result.assertions.iteritems() %}
+				<assertion name='{{ assertion_name }}' status='{{ assertion_result.status }}'
+					newbaseline='{{ not assertion_result.baseline_status }}'>
+				</assertion>
+			{% endfor %}
 		</testcase>
-		{% else %}
-		<testcase name='{{ case_result.name }}' time='{{ case_result.time_taken }}'/>
-		{% endif %}
 	{% endfor %}
 	</testsuite>
 {% endfor %}
-</testsuites>
+</project>
