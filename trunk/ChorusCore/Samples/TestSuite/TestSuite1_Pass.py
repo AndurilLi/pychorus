@@ -5,6 +5,7 @@ Created on Nov 18, 2013
 '''
 from ChorusCore.MyTestCase import MyTestCase
 from ChorusCore import TestScope, Utils
+from ChorusCore import PerformanceManagement
 #@TestScope.setscope(TestScope.Scope.Sanity,TestScope.Scope.Regression)
 @TestScope.setdependency("TestSuite2_Pass")
 class TestSuite1_Pass(MyTestCase):
@@ -30,7 +31,8 @@ class TestSuite1_Pass(MyTestCase):
     def tearDownClass(cls):
         '''Add en scripts after all cases'''
         super(TestSuite1_Pass,cls).tearDownClass()
-        
+    
+    @PerformanceManagement.EAFlag()
     @TestScope.setscope(TestScope.Scope.Sanity,TestScope.Scope.Regression)
     @TestScope.setdependency("testC05_depend")
     def testC01_pass(self):
@@ -52,7 +54,7 @@ class TestSuite1_Pass(MyTestCase):
         self.assertTrue(True, "Break_Message_for_unitteset_assertTrue")
         self.assertEqual("A01_data","A01_data","Break_Message_for_unittest_assertEqual")
         from ChorusCore.APIManagement import Request
-        api = Request(url = "data/cityinfo/101010100.html", method = "get", base_url = "http://www.weather.com.cn", ea_flag = True).send()
+        api = Request(url = "data/cityinfo/101010100.html", method = "get", base_url = "http://www.weather.com.cn", timeout = 3).send()
         self.assertHTTPResponse("A04_HttpCompare_With_Baseline", api)
         
     @TestScope.setscope(TestScope.Scope.Regression)
@@ -71,6 +73,13 @@ class TestSuite1_Pass(MyTestCase):
     def testC04_crash(self):
         self.assertBool("A01_Compare_Bool", True)
         abc
-        
+    
     def testC05_depend(self):
+        self.wait_timeout()
         self.assertDataOnFly("A01_Compare_Equal","abcd", "abcd")
+    
+    @staticmethod
+    @PerformanceManagement.EAFlag(name="Test timeout fail", detail={"hi":"here is performance result"}, timeout=2)
+    def wait_timeout(timeout = 3):
+        import time
+        time.sleep(4)

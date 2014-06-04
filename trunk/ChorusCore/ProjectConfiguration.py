@@ -86,9 +86,7 @@ class ConfigFile:
         else:
             config_filepath = os.path.join("Config",config_filepath)
         config_paths = config_filepath.split(os.path.sep)
-        print config_paths
         self.config_filepath = Utils.get_filestr(config_paths, config_filename)
-        print self.config_filepath
         self.cfg=Utils.read_config(self.config_filepath)
         try:
             self.get_config()

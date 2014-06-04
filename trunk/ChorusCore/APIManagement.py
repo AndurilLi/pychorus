@@ -37,7 +37,7 @@ class Request:
                  mode = None,
                  upload_files = {},
                  credentials = None,
-                 ea_flag = False):
+                 timeout = None):
         self.logger = ChorusGlobals.get_logger()
         if base_url:
             base_url = base_url
@@ -51,7 +51,9 @@ class Request:
              
         if not url:
             self.url = base_url
+            self.endpoint = base_url
         else:
+            self.endpoint = url
             if base_url.endswith("/") and url.startswith("/"):
                 self.url = base_url[0:-1] + url
             elif (not base_url.endswith("/")) and (not url.startswith("/")):
@@ -91,7 +93,7 @@ class Request:
             self.mode = None
         self.upload_files = upload_files
         self.credentials = credentials
-        self.ea_flag = ea_flag
+        self.timeout = timeout
     
     def set_request_mode(self, header_mode):
         self.headers["content-type"] = header_mode
@@ -268,38 +270,32 @@ class Request:
             newresp[key]=resp[key]
         self.result = result
         self.response = Response(response_data = content_dict, response_header = newresp, status = ' '.join([str(resp.status), resp.reason]),url = url_for_read)
-        self.jsdata = self.generate_json()
-        if self.ea_flag:
+        self.jsdata = self.generate_detail()
+        if self.timeout and str(self.timeout).isdigit() == True:
             from PerformanceManagement import Performance_Result
-            Performance_Result.add(self.url, self.response.status, self.jsdata, self.time_taken)
+            Performance_Result.add(self.endpoint, self.jsdata, self.time_taken, self.timeout)
         return self
     
-    def generate_json(self):
-        try:
-            if self.mode:
-                body = {
-                            "mode": self.mode,
-                            "uploaded_files": self.upload_files,
-                            "body_para":self.body
-                        }
-            else:
-                body = self.realbody
-            jsdata = json.dumps({
-                                "url": self.response.url,
-                                "method" : self.method,
-                                "request_parameters" : self.parameters,
-                                "request_headers" : self.headers,
-                                "request_body":  body,
-                                "response_headers": self.response.headers,
-                                "response_body": self.response.data,
-                                "response_status": self.response.status,
-                                "time_taken": self.time_taken
-                                })
-        except Exception,e:
-            message = "Cannot transfer api info to json, please change it before assertion with error: %s" % str(e)
-            self.logger.warning(message)
-            jsdata = json.dumps({"message":message})
-        return jsdata
+    def generate_detail(self):
+        if self.mode:
+            body = {
+                        "mode": self.mode,
+                        "uploaded_files": self.upload_files,
+                        "body_para":self.body
+                    }
+        else:
+            body = self.realbody
+        return {
+                    "url": self.response.url,
+                    "method" : self.method,
+                    "request_parameters" : self.parameters,
+                    "request_headers" : self.headers,
+                    "request_body":  body,
+                    "response_headers": self.response.headers,
+                    "response_body": self.response.data,
+                    "response_status": self.response.status,
+                    "time_taken": self.time_taken
+                }
  
 class Response:
     '''Provide a class to handle response'''

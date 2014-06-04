@@ -65,6 +65,11 @@
 	    <div id="main">
 	        <div id="summary"> <!-- summary infos about test suite: including case number. passed, failed and crashed numbers -->
                 <h3>Obj Number: {{ earesult.number }}</h3>
+                {% if earesult.status %}
+                <h3>Status: <span class="green">Pass</span></h3>
+                {% else %}
+                <h3>Status: <span class="red">Fail</span></h3>
+                {% endif %}
             </div>
             <div id="detail"> <!-- detail of test case result, display all the checkpoint -->
 	        <ul class="filetree treeview-famfamfam" id="browser">
@@ -72,23 +77,27 @@
 	                <li>
 	                    <table class="table" width=500px>
 	                    	<tr>
-	                    		<th width=47%>Name</th>
-	                    		<th width=30%>Detail</th>
+	                    		<th width=20%>Name</th>
+	                    		<th width=57%>Detail</th>
 	                    		<th width=8%>Status</th>
 	                    		<th width=15%>Time Taken(ms)</th>
 	                    	</tr>
 	                    	{% for obj_result in earesult.data %}
 	                        <tr class="TextRow">
-				                <td width=47%>{{obj_result.name}}</td>
-				                <td class="TextCell" width=30%>
+				                <td width=20%>{{obj_result.name}}</td>
+				                <td class="TextCell" width=57%>
 			                       <div class="TextCellHidden" style="font-size:100%">click me</div>
 			                       <div class="TextCellShow">
 			                        <pre>
-			                         <ul><script>var theInput = {{ obj_result.detail}};var duration = JSON.stringify(theInput, null, 4);document.write(duration);</script></ul>   
+			                         <ul><script>var theInput = {{obj_result.detail}};var duration = JSON.stringify(theInput, null, 4);document.write(duration);</script></ul>   
       								</pre>
 								   </div>												
 			                    </td>
-                                <td width=8%>{{obj_result.status}}</td>
+			                    {% if obj_result.status %}
+				                <td width=8% class="green">Pass</td>
+				                {% else %}
+				                <td width=8% class="red">Fail</td>
+				                {% endif %}
                                 <td width=15%>{{obj_result.time_taken}}</td>
 				             </tr>
 	                        {% endfor %}
