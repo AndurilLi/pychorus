@@ -131,11 +131,11 @@ class DBOperation:
     def __init__(self, db_config):
         self.handler = set_base_db_info(db_config)
     
-    def execute(self, sql):
-        execute_sql(sql, self.handler)
+    def execute_sql(self, sql):
+        return execute_sql(sql, self.handler)
         
-    def execute_as_dict(self, sql):
-        execute_sql_dict(sql, self.handler)
+    def execute_sql_dict(self, sql):
+        return execute_sql_dict(sql, self.handler)
     
     def __del__(self):
         close_connection(self.handler)
