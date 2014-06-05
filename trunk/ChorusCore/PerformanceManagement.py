@@ -10,11 +10,12 @@ from functools import wraps
 import ChorusGlobals
 
 class Performance_Object:
-    def __init__(self, name, status, detail, time_taken):
+    def __init__(self, name, status, detail, time_taken, timeout):
         self.name = name
         self.status = status
         self.detail = detail
         self.time_taken = Utils.round_sig(time_taken)
+        self.timeout = timeout
         
 class Performance_Result:
     data = []
@@ -26,7 +27,7 @@ class Performance_Result:
         if not status:
             cls.status = False
         js_detail = cls.generate_json(detail)
-        cls.data.append(Performance_Object(name, status, js_detail, time_taken))
+        cls.data.append(Performance_Object(name, status, js_detail, time_taken, timeout))
         ChorusGlobals.get_logger().info("Add Performance Result %s, status %s, time_taken %s" % (name, status, str(time_taken)))
         cls.number += 1
     

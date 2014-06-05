@@ -64,7 +64,7 @@
 	    <h1 id="banner">Performance Result</h1>
 	    <div id="main">
 	        <div id="summary"> <!-- summary infos about test suite: including case number. passed, failed and crashed numbers -->
-                <h3>Obj Number: {{ earesult.number }}</h3>
+                <h3>Case Number: {{ earesult.number }}</h3>
                 {% if earesult.status %}
                 <h3>Status: <span class="green">Pass</span></h3>
                 {% else %}
@@ -77,15 +77,16 @@
 	                <li>
 	                    <table class="table" width=500px>
 	                    	<tr>
-	                    		<th width=20%>Name</th>
-	                    		<th width=57%>Detail</th>
-	                    		<th width=8%>Status</th>
-	                    		<th width=15%>Time Taken(ms)</th>
+	                    		<th width=23%>CaseName</th>
+	                    		<th width=52%>Detail</th>
+	                    		<th width=5%>Status</th>
+	                    		<th width=10%>TimeTaken(s)</th>
+	                    		<th width=10%>Threshold(s)</th>
 	                    	</tr>
 	                    	{% for obj_result in earesult.data %}
 	                        <tr class="TextRow">
-				                <td width=20%>{{obj_result.name}}</td>
-				                <td class="TextCell" width=57%>
+				                <td width=23%>{{obj_result.name}}</td>
+				                <td class="TextCell" width=52%>
 			                       <div class="TextCellHidden" style="font-size:100%">click me</div>
 			                       <div class="TextCellShow">
 			                        <pre>
@@ -94,11 +95,12 @@
 								   </div>												
 			                    </td>
 			                    {% if obj_result.status %}
-				                <td width=8% class="green">Pass</td>
+				                <td width=5% class="green">Pass</td>
 				                {% else %}
-				                <td width=8% class="red">Fail</td>
+				                <td width=5% class="red">Fail</td>
 				                {% endif %}
-                                <td width=15%>{{obj_result.time_taken}}</td>
+                                <td width=10%>{{obj_result.time_taken}}</td>
+                                <td width=10%>{{obj_result.timeout}}</td>
 				             </tr>
 	                        {% endfor %}
 	                    </table>

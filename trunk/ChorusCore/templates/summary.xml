@@ -35,4 +35,12 @@
 	{% endfor %}
 	</testsuite>
 {% endfor %}
+	<performance name='Performance Result' status='{{ ea.status }}' total='{{ ea.number }}'>
+		{% for case_result in ea.data %}
+		<testcase name='{{ case_result.name }}' status='{{ case_result.status }}'
+			time='{{ case_result.time_taken }}' threshold='{{ case_result.timeout }}'>
+			<content>{{case_result.detail}}</content>
+		</testcase>
+		{% endfor %}
+	</performance>
 </project>

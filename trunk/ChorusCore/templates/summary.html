@@ -49,9 +49,25 @@
 	                                {% else %}
 	                                	<th class="red" width=20%>Yes, please run it again</th>
 	                                {% endif %}
-		                        </tr>
 		                        {% endfor %}
+		                        </tr>
 		                    </table>
+		                    {% if ea.data %}
+		                    <br>
+		                    <br>
+		                    <table class="table" width=500px>
+		                    	<tr>
+		                    		<th width=50%>
+                                        <a href=Performance.html>Performance Result</a>
+		                			</th>
+		                    		{% if ea.status %}
+		                        	<th class="green" width=50%>Passed</th>
+		                        	{% else %}
+		                        	<th class="red" width=50%>Failed</th>
+		                        	{% endif %}
+		                    	</tr>
+		                    </table>
+		                    {% endif %}
 		                </li>
 	                    <li class="hidden">
 		                </li>
