@@ -4,7 +4,7 @@ Created on Mar 1, 2014
 @author: mxu,Anduril
 @target: to generate a pretty HTML Report and an email template for CI
 '''
-import os
+import os,sys
 import ChorusGlobals
 from ChorusConstants import CommonConstants
 import Utils
@@ -114,7 +114,10 @@ class ReportManagement:
                             for assertion_name, assertion_result in case_result.assertions.items():
                                 if not assertion_result.statusflag:
                                     print "------Assertion: %s ----- %s" % (assertion_name, assertion_result.status)   
-    
+        if not self.result.statusflag:
+            sys.exit(1)
+        
+        
     def generate_html(self):
         self.analyze_result()
         self.copy_template()
