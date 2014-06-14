@@ -21,11 +21,16 @@ class Performance_Result:
     data = []
     status = True
     number = 0
+    passed = 0
+    failed = 0
     @classmethod
     def add(cls, name, detail, time_taken, timeout=30):
         status = True if time_taken <= timeout else False
         if not status:
             cls.status = False
+            cls.failed += 1
+        else:
+            cls.passed += 1
         js_detail = cls.generate_json(detail)
         cls.data.append(Performance_Object(name, status, js_detail, time_taken, timeout))
         ChorusGlobals.get_logger().info("Add Performance Result %s, status %s, time_taken %s" % (name, status, str(time_taken)))
