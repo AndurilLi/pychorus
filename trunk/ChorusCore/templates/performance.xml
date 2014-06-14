@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='ISO-8859-2' ?>
+<testsuites>
+	<testsuite name='Performance Result' status='{{ ea.status }}' tests='{{ ea.number }}'
+		pass='{{ ea.passed }}' failures='{{ ea.failed }}'>
+		{% for case_result in ea.data %}
+		<testcase name='{{ case_result.name }}' status='{{ case_result.status }}'
+			time='{{ case_result.time_taken }}' threshold='{{ case_result.timeout }}'>
+			{% if not case_result.status %}
+				<failure message="Performance failure">Please click html report to see details</failure>
+			{% endif %}
+		</testcase>
+		{% endfor %}
+	</testsuite>
+</testsuites>

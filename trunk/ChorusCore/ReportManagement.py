@@ -96,6 +96,11 @@ class ReportManagement:
         filename = os.path.join(self.output_path, 'Performance.html')
         Utils.write_to_file(filename, content, "w+")
         self.logger.info("Performance.html generated")
+        xmltemplate = env.get_template("performance.xml")
+        content = xmltemplate.render({"ea":Performance_Result})
+        filename = os.path.join(self.output_path, 'Performance.xml')
+        Utils.write_to_file(filename, content, "w+")
+        self.logger.info("Performance.xml generated")
         
     def generate_console_report(self):
         if self.result.statusflag:
@@ -134,13 +139,13 @@ class ReportManagement:
         Utils.write_to_file(filename, content, "w+")
         self.logger.info("Summary.html generated")
         #TODO Modify xml
-        content = xmltemplate.render({"result":self.result,"ea":Performance_Result})
+        content = xmltemplate.render({"result":self.result})
         filename = os.path.join(self.output_path, 'Summary.xml')
         Utils.write_to_file(filename, content, "w+")
         self.logger.info("Summary.xml generated")
         if os.environ.has_key("BUILD_URL"):
             self.generate_result_email()
-        if Performance_Result.data:    
+        if Performance_Result.data:
             self.generate_performance_result()
         
 class CIReport:
