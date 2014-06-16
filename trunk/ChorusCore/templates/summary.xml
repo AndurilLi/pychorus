@@ -20,6 +20,9 @@
 			tests='{{ case_result.assertion_number }}' pass='{{ case_result.passed_assertions }}' 
 			failures='{{ case_result.failed_assertions }}' newbaseline='{{ not case_result.baseline_status }}' 
 			time='{{ case_result.time_taken }}'>
+			{% if not case_result.statusflag %}
+				<failure type="Assertion Error"/>
+			{% endif %}
 			{% if case_result.status == "Crashed" %}
 				<error type='{{ case_result.fail_message.type }}'>
 					<content>{{case_result.fail_message.content}}</content>
@@ -29,9 +32,6 @@
 			{% for assertion_name, assertion_result in case_result.assertions.iteritems() %}
 				<assertion name='{{ assertion_name }}' status='{{ assertion_result.status }}'
 					newbaseline='{{ not assertion_result.baseline_status }}'>
-					{% if not assertion_result.statusflag %}
-						<failure type="Assertion Error">Please click html report to see details</failure>
-					{% endif %}
 				</assertion>
 			{% endfor %}
 		</testcase>
