@@ -70,7 +70,7 @@ class ReportManagement:
                     self.ciresult.starttime = datetime.datetime.fromtimestamp(float(resp['timestamp'])/1000).strftime('%Y-%m-%d %H:%M:%S')
                     self.ciresult.job = resp["fullDisplayName"]
                     self.ciresult.htmllink = self.ciresult.joblink+"HTML_Report"
-                    self.ciresult.consolelink = self.ciresult.htmllink+"console"
+                    self.ciresult.consolelink = self.ciresult.joblink+"console"
                     self.ciresult.duration = Utils.round_sig(float(resp["duration"])/1000000)
         if os.environ.has_key(CommonConstants.KNOWN_ISSUE_KEY):
             self.ciresult.knownissueflag = True
