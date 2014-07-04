@@ -17,7 +17,7 @@ setup(
         install_requires = [
                                 'httplib2>=0.8',
                                 'Jinja2>=2.6',
-                                'mysql-connector-python=1.1.6',
+                                'mysql-connector-python>=1.0.10',
                                 'PIL>=1.1.7'
                             ],
         entry_points = {"console_scripts":['chorusrun=ChorusCore.RunTest:main',
