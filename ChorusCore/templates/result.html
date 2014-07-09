@@ -38,11 +38,13 @@
 				</tr>
 				{% for suite_name,suite_result in result.suites.iteritems() %}
 				{% if suite_result.fail_message %}
+				<tr>
 					<td width=15%><a href="{{ci.suites[suite_name].link}}">{{suite_name}}</a></td>
 					<td width=15%>SetupClass</td>
 					<td width=10%>{{suite_result.fail_message.type}}</td>
 					<td width=15%>{{suite_result.fail_message.content}}</td>
 					<td width=45%>{{suite_result.fail_message.line_info}}</td>
+				</tr>
 				{% endif %}
 				{% for case_name, case_result in suite_result.cases.iteritems() %}
 				{% if case_result.fail_message %}
