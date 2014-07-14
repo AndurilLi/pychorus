@@ -85,7 +85,11 @@ class VerificationManagement:
                             content = assertion_result.current
                             src_image_filename = Utils.get_filestr(self.suite_output_path, content["image_name"]+"_real"+"."+content["image_type"])
                             dst_image_filename = Utils.get_filestr(self.suite_baseline_path, content["image_name"]+"."+content["image_type"])
-                            Utils.copy_to_file(src_image_filename, dst_image_filename)
+                            try:
+                                Utils.copy_to_file(src_image_filename, dst_image_filename)
+                            except Exception, e:
+                                self.logger.warning("Copy image file %s to %s failed with error %s" % (src_image_filename, dst_image_filename, str(e)))
+                                del baseline_dict[case_name][assertion_name]
         base_filename = '%s.base' % result.name
         Utils.dump_dict_to_file(current_dict, self.suite_output_path, base_filename)
         if not result.baseline_status:
