@@ -73,8 +73,8 @@ class MyTestCase(unittest.TestCase):
                    }
         self.vm.checkpoint(self, name, content, level = levels, cptype = TYPES.Image, logic = image_logic)
     
-    def assertElementShot(self, name, driver, target = None, exclusion = None, levels = LEVELS.Normal, image_logic = IMAGELOGIC.Full, imagetype = "png"):
-        self.vm.save_elementshot(self, name, driver, target, exclusion, imagetype)
+    def assertElementShot(self, name, driver, target = None, exclusion = None, iframe_loc = None, levels = LEVELS.Normal, image_logic = IMAGELOGIC.Full, imagetype = "png"):
+        self.vm.save_elementshot(self, name, driver, target, exclusion, iframe_loc, imagetype)
         content = {
                     "image_name":self._testMethodName+"_"+name,
                     "image_type":imagetype
