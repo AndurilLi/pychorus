@@ -31,6 +31,7 @@ class TestSuiteManagement:
         self.suite_dict = self.get_test_mapping()
         self.filter_test_mapping()
         self.set_scope()
+        self.get_project_run()
         self.get_testsuites()
         self.set_baselinepath()
         self.get_knownissues()
@@ -77,11 +78,17 @@ class TestSuiteManagement:
     
     def execute_suites(self):
         start_time = time.time()
+        if self.before_run:
+            m = importlib.import_module("%s.ProjectRun" % (self.TESTSUITE_FOLDER))
+            getattr(m, 'before_run')()
         for suite in self.suites_in_scope._tests:
             unittest_result = unittest.TextTestRunner(verbosity=2).run(suite)
             self.runner.append(unittest_result)
             if unittest_result.errors:
-                self.parse_crashed_suite(suite.name, unittest_result)
+                self.parse_crashed_suite(suite.name, unittest_result)           
+        if self.after_run:
+            m = importlib.import_module("%s.ProjectRun" % (self.TESTSUITE_FOLDER))
+            getattr(m, 'after_run')()
         end_time = time.time()
         self.result.time_taken = Utils.round_sig(end_time - start_time)
         for suite_result in self.result.suites:
@@ -96,6 +103,24 @@ class TestSuiteManagement:
                 self.result.status = ResultStatus.CRASHED
                 self.result.statusflag = False
                 self.result.crash_suites += 1
+    
+    def get_project_run(self):
+        self.before_run = None
+        self.after_run = None
+        suites_path = Utils.get_filestr([self.TESTSUITE_FOLDER], "")
+        if os.path.isfile(os.path.join(suites_path, 'ProjectRun.py')):
+            try:
+                func_dict = Utils.class_browser("%s.%s" % (self.TESTSUITE_FOLDER, 'ProjectRun'))
+            except Exception,e:
+                traceback.print_exc()
+                self.logger.critical("Cannot import project run in folder %s with error %s" % (self.TESTSUITE_FOLDER,str(e)))
+                raise Exception("Cannot import project run in folder %s with error %s" % (self.TESTSUITE_FOLDER,str(e))) 
+            if func_dict:
+                if 'before_run' in func_dict:
+                    self.before_run = func_dict['before_run']
+                if 'after_run' in func_dict:
+                    self.after_run = func_dict['after_run']
+        
         
     def get_testsuites(self, sortflag=True):
         self.dependency_mapping = {"suites":{},"cases":{}}
@@ -217,6 +242,8 @@ class TestSuiteManagement:
         suites_dict={}
         for suite_file in suites_filelist:
             if suite_file.endswith(".py"):
+                if suite_file == 'ProjectRun.py':
+                    continue
                 suite_name = suite_file[0:suite_file.rfind('.')]
                 try:
                     case_dict = Utils.class_browser("%s.%s" % (self.TESTSUITE_FOLDER,suite_name))
