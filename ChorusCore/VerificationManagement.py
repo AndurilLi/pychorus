@@ -234,7 +234,7 @@ class VerificationManagement:
         filename = Utils.get_filestr(self.suite_output_path,tsobj._testMethodName + "_"+ name+"_real"+"."+imagetype)
         '''make sure the driver has related functions'''
         if target or exclusion:
-            driver.get_screenshot_without_items(filename, target, exclusion)
+            driver.get_elementshot_without_items(filename, target, exclusion)
         else:
             driver.get_screenshot_as_file(filename) 
     
