@@ -230,13 +230,18 @@ class VerificationManagement:
             self.logger.error("Cannot save image with error %s" % str(e))
             raise Exception("Cannot save image with error %s" % str(e))
     
-    def save_elementshot(self, tsobj, name, driver, target, exclusion, imagetype = ".png"):
-        filename = Utils.get_filestr(self.suite_output_path,tsobj._testMethodName + "_"+ name+"_real"+"."+imagetype)
-        '''make sure the driver has related functions'''
-        if target or exclusion:
-            driver.get_elementshot_without_items(filename, target, exclusion)
-        else:
-            driver.get_screenshot_as_file(filename) 
+    def save_elementshot(self, tsobj, name, driver, target, exclusion, iframe_loc, imagetype = ".png"):
+        try:
+            filename = Utils.get_filestr(self.suite_output_path,tsobj._testMethodName + "_"+ name+"_real"+"."+imagetype)
+            '''make sure the driver has related functions'''
+            if target or exclusion:
+                driver.get_elementshot_without_items(filename, target, exclusion, iframe_loc)
+            else:
+                driver.get_screenshot_as_file(filename)
+        except Exception, e:
+            traceback.print_exc()
+            self.logger.error("Cannot save image with error %s" % str(e))
+            raise Exception("Cannot save image with error %s" % str(e))
     
     def make_thumbfile(self, im, thumb_file):
         thumb_im = Utils.create_entity(im)
