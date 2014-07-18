@@ -66,6 +66,16 @@ class MyTestCase(unittest.TestCase):
         self.vm.checkpoint(self, name, content, level = levels, cptype = TYPES.Image, logic = image_logic)
     
     def assertScreenShot(self, name, driver, levels = LEVELS.Normal, image_logic = IMAGELOGIC.Full, imagetype = "png", elements = None, coordinates = None):
+        #add by Peng, suggested by Yue, Approved by Lucinda
+        #If the system is linux, and use javamonkey driver, will auto skip the assertion
+        try:
+            if driver.__class__.__name__ == "JavaMonkey":
+                import sys
+                if sys.platform.startswith("linux"):
+                    self.logger.info("Assertion %s has been skipped due to JavaMonkey&Linux reason" % name)
+                    return
+        except:
+            pass
         self.vm.save_screenshot(self, name, driver, elements, coordinates, imagetype)
         content = {
                     "image_name":self._testMethodName+"_"+name,
