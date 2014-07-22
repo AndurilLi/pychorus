@@ -46,19 +46,19 @@ will change default.cfg file MYENV section key Scope value to "Sanity,Regression
 
 ## Useful Tips
 
-1. chorusrun --color\n
+1. `chorusrun --color`
 
 It will give a colorful logs in command line, based on different log level.
 
-2. chorusrun -e MYENV
+2. `chorusrun -e MYENV`
 
 It will reload the environment to MYENV, and related keys in MYENV section will be reloaded in configinfo
 
-3. You may use "from ChorusCore import ChorusGlobals" to load global variables
+3. You may use `from ChorusCore import ChorusGlobals` to load global variables
 
 4. You may modify chorusrun.py to redesign the project preparation
 
-5. You may use "from ChorusCore import Utils" to import some common useful functions
+5. You may use `from ChorusCore import Utils` to import some common useful functions
 
 6. ChorusCore.APIManagement and ChorusCore.DBOperation will provide HTTPAPI and MySQL basic functions support
 
