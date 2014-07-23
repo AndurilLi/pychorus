@@ -53,7 +53,7 @@ class ProjectConfiguration:
         '''Set output folder
            Input: options.outputpath
            Output: self.outputdir, ChorusGlobals.outputdir'''
-        self.outputdir = Utils.create_folder(self.options.outputpath, "Output", True)
+        self.outputdir = os.path.abspath(Utils.create_folder(self.options.outputpath, "Output", True))
         ChorusGlobals.set_outputdir(self.outputdir)
         print "Set output directory to %s" % self.outputdir
         

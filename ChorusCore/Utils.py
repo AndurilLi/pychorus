@@ -58,10 +58,11 @@ def get_filelist(paths = None,filename = ''):
 
 def get_filestr(paths = None,filename = ''):
     '''Return File Fullpath'''
-#    rootpath = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
-    fullpath = os.getcwd()
-    for path in  paths:
+    fullpath = ""
+    for path in paths:
         fullpath = os.path.join(fullpath, path)
+    if not os.path.abspath(fullpath):
+        fullpath = os.path.join(os.getcwd(), fullpath)
     if not os.path.exists(fullpath):
         os.makedirs(fullpath)
     return os.path.join(fullpath,filename)
