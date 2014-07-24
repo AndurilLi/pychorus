@@ -170,7 +170,7 @@ class ImageCompare(BWImageCompare):
     @property
     def levenshtein(self):
         """Calculate the Levenshtein distance."""
-
+#         import Levenshtein
         if not hasattr(self, '_lv'):
             stra_r = ''.join((chr(x>>16) for x in self.imga_int))
             strb_r = ''.join((chr(x>>16) for x in self.imgb_int))
@@ -198,6 +198,14 @@ class FuzzyImageCompare(object):
     def __init__(self, imga, imgb, lb=1, tol=15):
         """Store the images in the instance."""
         self.logger = ChorusGlobals.get_logger()
+        sizea, sizeb = imga.size, imgb.size
+        if sizea != sizeb: #sizea=sizeb in most cases  
+            newx = min(sizea[0], sizeb[0])
+            newy = min(sizea[1], sizeb[1])
+            
+            ''' Rescale to a common size:'''
+            imga = imga.resize((newx, newy), Image.ANTIALIAS)
+            imgb = imgb.resize((newx, newy), Image.ANTIALIAS)
         self._imga, self._imgb, self._lb, self._tol = imga, imgb, lb, tol
 
     def compare(self):
@@ -207,7 +215,7 @@ class FuzzyImageCompare(object):
             return self._compare
 
         lb, i = self._lb, 2
-
+        
         diffs = {
             'levenshtein': [],
             'nrmsd': [],
@@ -219,7 +227,7 @@ class FuzzyImageCompare(object):
             'nrmsd': False,
             'psnr': False,
         }
-
+        levenshtein_flag = 0
         while not all(stop.values()):
             cmpresult = ImageCompare(self._imga, self._imgb, i)
 
@@ -228,7 +236,11 @@ class FuzzyImageCompare(object):
                 abs(diff[-1] - diff[-lb-1]) <= abs(diff[-lb-1] - diff[-lb-2]):
                 stop['levenshtein'] = True
             else:
-                diff.append(cmpresult.levenshtein)
+                levenshtein_flag += 1
+                if levenshtein_flag>=5:
+                    stop['levenshtein'] = True
+                else:
+                    diff.append(cmpresult.levenshtein)
 
             diff = diffs['nrmsd']
             if len(diff) >= lb+2 and \
@@ -236,7 +248,7 @@ class FuzzyImageCompare(object):
                 stop['nrmsd'] = True
             else:
                 diff.append(cmpresult.nrmsd)
-
+      
             diff = diffs['psnr']
             if len(diff) >= lb+2 and \
                 abs(diff[-1] - diff[-lb-1]) <= abs(diff[-lb-1] - diff[-lb-2]):
