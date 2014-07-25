@@ -305,15 +305,23 @@ def round_sig(x, sig = 3):
     except:
         return 0
     
-def qr_decode(element, parse_url="http://zxing.org/w/decode"):
+def qr_decode(element=None, image_filepath=None, parse_url="http://zxing.org/w/decode"):
     from APIManagement import Request,RequestMode
     try:
-        element.get_screenshot_as_file("temp_code.png")
+        if element:
+            element.get_screenshot_as_file("temp_code.png")
+            filepath = "temp_code.png"
+        elif image_filepath:
+            filepath = image_filepath
+        else:
+            print "No input value"
+            return False
         req = Request(base_url=parse_url, method="POST", mode=RequestMode.multi_form,
-                      upload_files={"f":"temp_code.png"})
+                      upload_files={"f":filepath})
         req.send()
         data = req.result["data"].split('<pre style="margin:0">')
-        os.remove("temp_code.png")
+        if element:
+            os.remove(filepath)
         return data[-1].split("</pre>")[0]
     except Exception, e:
         traceback.print_exc()
