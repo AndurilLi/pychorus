@@ -304,3 +304,19 @@ def round_sig(x, sig = 3):
         return round(x, sig - int(floor(log10(abs(x))))-1)
     except:
         return 0
+    
+def qr_decode(element, parse_url="http://zxing.org/w/decode"):
+    from APIManagement import Request,RequestMode
+    try:
+        element.get_screenshot_as_file("temp_code.png")
+        req = Request(base_url=parse_url, method="POST", mode=RequestMode.multi_form,
+                      upload_files={"f":"temp_code.png"})
+        req.send()
+        data = req.result["data"].split('<pre style="margin:0">')
+        os.remove("temp_code.png")
+        return data[-1].split("</pre>")[0]
+    except Exception, e:
+        traceback.print_exc()
+        print "Decode QRCode meets error %s" % str(e)
+        return False
+    
