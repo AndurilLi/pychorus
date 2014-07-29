@@ -67,16 +67,17 @@ class TestSuite1_Pass(MyTestCase):
         
     def testC03_crash(self):
         self.assertBool("A01_Compare_Bool", True)
-        abc
+        pass
     
     @TestScope.setscope(TestScope.Scope.Regression)
     def testC04_crash(self):
         self.assertBool("A01_Compare_Bool", True)
-        abc
+        pass
     
     def testC05_depend(self):
         self.wait_timeout()
         self.assertDataOnFly("A01_Compare_Equal","abcd", "abcd")
+        
     
     @staticmethod
     @PerformanceManagement.EAFlag(name="Test timeout fail", detail={"hi":"here is performance result"}, timeout=2)

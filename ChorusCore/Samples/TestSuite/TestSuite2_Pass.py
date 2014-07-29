@@ -28,6 +28,7 @@ class TestSuite2_Pass(MyTestCase):
         
     def testC01_depend(self):
         self.assertDataOnFly("A01_Compare_Equal","abcd", "abcd")
+        self.assertEqual(True, False)
     
     @TestScope.setscope(TestScope.Scope.Sanity)
     @TestScope.setdependency("testC01_depend")   

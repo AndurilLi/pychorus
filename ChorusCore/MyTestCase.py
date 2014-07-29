@@ -22,6 +22,8 @@ class MyTestCase(unittest.TestCase):
             self.scopes = ["all"]
         if hasattr(getattr(self, methodName), '_depends'):          
             self.depends = getattr(self, methodName)._depends
+        else:
+            self.depends = []
         self.executed_cases = []
     
     def init_assertions(self, name):
@@ -100,6 +102,19 @@ class MyTestCase(unittest.TestCase):
         you can do some initial work here
         '''
         self.startTime = time.time()
+        #has dependency test case
+        if len(self.depends) > 0:
+            suites = ChorusGlobals.get_testresult().suites.values()
+            mapping = {}
+            for s in suites:
+                cases = s.cases
+                for key, value in cases.iteritems():
+                    mapping[key] = value.statusflag
+            for d in self.depends:
+                from ChorusConstants import ResultStatus
+                if mapping.has_key(d) and not mapping[d]:
+                    msg = "Has failed dependency test case :" + str(d)
+                    self.assertEqual(True, False, msg)
         unittest.TestCase.setUp(self)
         
     @classmethod
@@ -108,6 +123,7 @@ class MyTestCase(unittest.TestCase):
         setUpClass is executed every time before run a test suite
         '''
         cls.suite_starttime = time.time()
+        
         cls.logserver = ChorusGlobals.get_logserver()
         cls.logserver.flush_console()
         super(MyTestCase,cls).setUpClass()
