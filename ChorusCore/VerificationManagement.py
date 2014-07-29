@@ -83,7 +83,7 @@ class VerificationManagement:
                         baseline_dict[case_name][assertion_name] = assertion_result.current
                         if assertion_result.cptype == "Image":
                             content = assertion_result.current
-                            src_image_filename = Utils.get_filestr(self.suite_output_path, content["image_name"]+"_real"+"."+content["image_type"])
+                            src_image_filename = Utils.get_filestr(self.suite_output_path, content["image_name"]+"."+content["image_type"])
                             dst_image_filename = Utils.get_filestr(self.suite_baseline_path, content["image_name"]+"."+content["image_type"])
                             try:
                                 Utils.copy_to_file(src_image_filename, dst_image_filename)
@@ -170,8 +170,8 @@ class VerificationManagement:
         content = assertion_result.current
         base_filename = Utils.get_filestr(self.suite_output_path,content["image_name"]+"_base"+"."+content["image_type"])
         base_thumbfilename = Utils.get_filestr(self.suite_output_path,content["image_name"]+"_base"+"_thumbnail"+"."+content["image_type"])
-        real_filename = Utils.get_filestr(self.suite_output_path,content["image_name"]+"_real"+"."+content["image_type"])
-        real_thumbfilename = Utils.get_filestr(self.suite_output_path,content["image_name"]+"_real"+"_thumbnail"+"."+content["image_type"])
+        real_filename = Utils.get_filestr(self.suite_output_path,content["image_name"]+"."+content["image_type"])
+        real_thumbfilename = Utils.get_filestr(self.suite_output_path,content["image_name"]+"_thumbnail"+"."+content["image_type"])
         im_base=Image.open(base_filename).convert('RGBA')
         im_real=Image.open(real_filename).convert('RGBA')
         imgcmp = FuzzyImageCompare(im_base,im_real)
@@ -181,8 +181,8 @@ class VerificationManagement:
         assertion_result.detail = {
                                     "basethumb": os.path.join(self.suite_name, content["image_name"]+"_base"+"_thumbnail"+"."+content["image_type"]),
                                     "basevalue": os.path.join(self.suite_name, content["image_name"]+"_base"+"."+content["image_type"]),
-                                    "realthumb": os.path.join(self.suite_name, content["image_name"]+"_real"+"_thumbnail"+"."+content["image_type"]),
-                                    "realvalue": os.path.join(self.suite_name, content["image_name"]+"_real"+"."+content["image_type"])
+                                    "realthumb": os.path.join(self.suite_name, content["image_name"]+"_thumbnail"+"."+content["image_type"]),
+                                    "realvalue": os.path.join(self.suite_name, content["image_name"]+"."+content["image_type"])
                                    }
         if assertion_result.similarity < assertion_result.logic:
             assertion_result.status = ResultStatus.FAILED
@@ -210,7 +210,7 @@ class VerificationManagement:
         
     def save_image(self, tsobj, name, imagedata, imagetype):
         try:
-            filename = Utils.get_filestr(self.suite_output_path,tsobj._testMethodName + "_"+ name+"_real"+"."+imagetype)
+            filename = Utils.get_filestr(self.suite_output_path,tsobj._testMethodName + "_"+ name+"."+imagetype)
             Utils.write_to_file(filename, imagedata)
         except Exception, e:
             traceback.print_exc()
@@ -219,7 +219,7 @@ class VerificationManagement:
     
     def save_screenshot(self, tsobj, name, driver, elements, coordinates, imagetype = ".png"):
         try:
-            filename = Utils.get_filestr(self.suite_output_path,tsobj._testMethodName + "_"+ name+"_real"+"."+imagetype)
+            filename = Utils.get_filestr(self.suite_output_path,tsobj._testMethodName + "_"+ name+"."+imagetype)
             '''make sure the driver has related functions'''
             if elements or coordinates:
                 driver.get_screenshot_without_items(filename, elements, coordinates)
@@ -232,7 +232,7 @@ class VerificationManagement:
     
     def save_elementshot(self, tsobj, name, driver, target, exclusion, iframe_loc, imagetype = ".png"):
         try:
-            filename = Utils.get_filestr(self.suite_output_path,tsobj._testMethodName + "_"+ name+"_real"+"."+imagetype)
+            filename = Utils.get_filestr(self.suite_output_path,tsobj._testMethodName + "_"+ name+"."+imagetype)
             '''make sure the driver has related functions'''
             if target or exclusion:
                 driver.get_elementshot_without_items(filename, target, exclusion, iframe_loc)
