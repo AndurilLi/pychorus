@@ -129,9 +129,7 @@ class SSHHelper:
             if shell:
                 self.shelltype = shell
             else:
-                print sys.platform.startswith("darwin")
                 self.shelltype = True if (sys.platform.startswith("win") or sys.platform.startswith("darwin")) else False
-            print self.shelltype
             popen_stderr = STDOUT if combine_error else PIPE
             self.session = Popen(cmd,shell=self.shelltype, stdin=PIPE,stdout=PIPE,stderr=popen_stderr)
             self.session.wait()
