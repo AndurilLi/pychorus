@@ -327,4 +327,16 @@ def qr_decode(element=None, image_filepath=None, parse_url="http://zxing.org/w/d
         traceback.print_exc()
         print "Decode QRCode meets error %s" % str(e)
         return False
+
+def get_svninfo():
+    from SSHHelper import SSHHelper
+    ssh = SSHHelper("localhost")
+    result = ssh.exe_cmd("svn info --force-interactive .")
+    if result.code == 0:
+        for line in result.stdout.split("\n"):
+            if line.startswith("URL: "):
+                return line.split("URL: ")[1].strip()
+    else:
+        print result.stderr
+        return None
     
