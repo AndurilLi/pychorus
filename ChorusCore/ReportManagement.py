@@ -121,14 +121,28 @@ class ReportManagement:
                                     print "------Assertion: %s ----- %s" % (assertion_name, assertion_result.status)   
         if not self.result.statusflag:
             sys.exit(1)
-        
+    
+    def set_baselineinfo(self):
+        self.updateinfo = {
+                           "output_path": self.output_path,
+                           "baseline_path": self.baseline_path
+                           }
+        svninfo = Utils.get_svninfo()
+        self.updateinfo["svn_baseline_link"] = svninfo + "/" + "/".join(self.baseline_path) if svninfo else None
+        if os.environ.has_key("BUILD_URL"):
+            self.updateinfo["ci_link"] = os.environ["BUILD_URL"] + "HTML_Report"
+        config = ChorusGlobals.get_configinfo()
+        self.updateinfo["chorus_server"] = config.get("Chorus_Server") or os.environ.get("Chorus_Server")
+        self.updateinfo["chorus_home"] = config.get("Chorus_Home") or os.environ.get("Chorus_Home") or "http://localhost:8765"
+    
     def generate_html(self):
+        self.set_baselineinfo()
         self.analyze_result()
         self.copy_template()
         env = Environment(loader=PackageLoader('ChorusCore', 'templates'))
         for suite_name, suiteresult in self.result.suites.iteritems():
             suitetemplate = env.get_template("suite.html")
-            content = suitetemplate.render({"result":suiteresult.__dict__})
+            content = suitetemplate.render({"result":suiteresult.__dict__, "bsinfo":self.updateinfo})
             filename = os.path.join(self.output_path, '%s.html' % suite_name )
             Utils.write_to_file(filename, content, "w+")
             self.logger.info("Suite %s.html generated" % suite_name)

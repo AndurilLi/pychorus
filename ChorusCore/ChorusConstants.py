@@ -107,6 +107,7 @@ class AssertionResult:
         self.statusflag = True
         self.similarity = 100
         self.onfly_flag = False
+        self.path = ""
         
     def getsettings(self, content, level, cptype, logic, jscontent):
         self.logic = logic
@@ -114,3 +115,4 @@ class AssertionResult:
         self.level = level
         self.current = content
         self.detail["realvalue"]=jscontent
+
