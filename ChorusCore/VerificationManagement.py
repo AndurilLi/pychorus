@@ -111,7 +111,7 @@ class VerificationManagement:
         if not case_result.assertions.has_key(assertion_name):
             case_result.assertions[assertion_name] = AssertionResult(assertion_name)
         assertion_result = case_result.assertions[assertion_name]
-        assertion_result.path = suite_name + "/" + case_name + "/" + assertion_name
+        assertion_result.path = case_name + "/" + assertion_name
         assertion_result.getsettings(content, level, cptype, logic, json.dumps(content))
         if assertion_result.baseline_status:
             self.compare_checkpoint(tsobj, assertion_result)
