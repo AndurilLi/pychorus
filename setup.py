@@ -19,6 +19,7 @@ setup(
                                 'Jinja2>=2.6',
                                 'mysql-connector-python>=1.1.6,<1.1.7',
                                 'pycrypto>=2.6,<2.7',
+                                'Pillow>=2.5.1',
                                 'paramiko',
                                 'psutil'
                             ],
