@@ -124,9 +124,10 @@ class ReportManagement:
     
     def set_baselineinfo(self):
         self.updateinfo = {
-                           "output_path": self.output_path,
-                           "baseline_path": self.baseline_path
+                           "output_path": self.output_path.replace("\\","\\\\"),
+                           "baseline_path": os.path.abspath(Utils.get_filestr(self.baseline_path)).replace("\\","\\\\")
                            }
+        self.logger.info("Getting svn info for update baseline...")
         svninfo = Utils.get_svninfo()
         self.updateinfo["svn_baseline_link"] = svninfo + "/" + "/".join(self.baseline_path) if svninfo else None
         if os.environ.has_key("BUILD_URL"):
@@ -134,7 +135,11 @@ class ReportManagement:
         config = ChorusGlobals.get_configinfo()
         self.updateinfo["chorus_server"] = config.get("Chorus_Server") or os.environ.get("Chorus_Server")
         self.updateinfo["chorus_home"] = config.get("Chorus_Home") or os.environ.get("Chorus_Home") or "http://localhost:8765"
-    
+        if self.updateinfo["chorus_server"] and self.updateinfo["chorus_server"].endswith("/"):
+            self.updateinfo["chorus_server"] = self.updateinfo["chorus_server"][:-1]
+        if self.updateinfo["chorus_home"].endswith("/"):
+            self.updateinfo["chorus_home"] = self.updateinfo["chorus_home"][:-1]
+            
     def generate_html(self):
         self.set_baselineinfo()
         self.analyze_result()

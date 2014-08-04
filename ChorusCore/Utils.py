@@ -333,10 +333,11 @@ def get_svninfo():
     ssh = SSHHelper("localhost")
     result = ssh.exe_cmd("svn info --force-interactive .")
     if result.code == 0:
+        print "Getting svn info success"
         for line in result.stdout.split("\n"):
             if line.startswith("URL: "):
                 return line.split("URL: ")[1].strip()
     else:
-        print result.stderr
+        print "Getting svn info failed %s" % result.stderr
         return None
     
