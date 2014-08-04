@@ -67,11 +67,12 @@
         		data.baseline = baseline;
         		data.svnlink = document.getElementById("svnlink").value;
         		data.comment = document.getElementById("comment").value;
-        		data.username = document.getElementById("username").value;
-        		data.password = document.getElementById("password").value;
+        		// data.username = document.getElementById("username").value;
+        		// data.password = document.getElementById("password").value;
         		data.output_path = document.getElementById("output_path").value;
         		data.baseline_path = document.getElementById("baseline_path").value;
         		data.ci_link = document.getElementById("ci_link").value;
+        		data.suite_name = result.name;
         		content = JSON.stringify(data);
         		url = baseurl + path + "?data=" + encodeURIComponent(content);
 				httpGet(url);
@@ -101,6 +102,7 @@
         		}
         		data.output_path = document.getElementById("output_path").value;
         		data.baseline_path = document.getElementById("baseline_path").value;
+        		data.suite_name = result.name;
         		content = JSON.stringify(data);
         		url = baseurl + path + "?data=" + encodeURIComponent(content);
 				httpGet(url);
@@ -306,7 +308,7 @@
 		                                    		<b>Comments: </b>{{ cp.comments }} 
 		                                    		<br />
 		                                    	{% endif %}
-		                                    	{% if not cp.statusflag and not cp.onfly_flag %}
+		                                    	{% if (not cp.statusflag and not cp.onfly_flag) or not cp.baseline_status %}
 		                                    		<div align="right"><input type="checkbox" name="UpdateBaseline" value="{{ cp.path }}">update baseline</div>
 		                                        {% endif %}
 		                                        {% if cp.cptype=="Image" %}
