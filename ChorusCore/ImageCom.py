@@ -4,7 +4,7 @@ Created on Mar 24, 2012
 @author: mxu
 '''
 import math
-import Image,ImageChops
+from PIL import Image,ImageChops
 import  ChorusGlobals
 import os
 

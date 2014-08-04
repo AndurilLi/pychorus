@@ -8,7 +8,7 @@ import os, json
 import ChorusGlobals
 import Utils
 from MyTestCase import LEVELS, TYPES, LOGIC
-import Image
+from PIL import Image
 from ImageCom import FuzzyImageCompare, metrictype
 from ChorusConstants import ResultStatus, SuiteResult, CaseResult, AssertionResult
 import traceback
