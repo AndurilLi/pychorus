@@ -331,7 +331,12 @@ def qr_decode(element=None, image_filepath=None, parse_url="http://zxing.org/w/d
 def get_svninfo():
     from SSHHelper import SSHHelper
     ssh = SSHHelper("localhost")
-    result = ssh.exe_cmd("svn info --force-interactive .", shell=True)
+    try:
+        result = ssh.exe_cmd("svn info --force-interactive .", shell=True)
+    except Exception, e:
+        traceback.print_exc()
+        print "svn get failed with error %s" % str(e)
+        return None
     if result.code == 0:
         print "Getting svn info success"
         for line in result.stdout.split("\n"):
