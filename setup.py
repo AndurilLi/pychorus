@@ -18,13 +18,13 @@ setup(
                                 'httplib2>=0.8',
                                 'Jinja2>=2.6',
                                 'mysql-connector-python>=1.1.6,<1.1.7',
-                                'PIL>=1.1.7',
                                 'pycrypto>=2.6,<2.7',
                                 'paramiko',
                                 'psutil'
                             ],
         entry_points = {"console_scripts":['chorusrun=ChorusCore.RunTest:main',
                                            'chorussetup=ChorusCore.CreateSamples:main',
-                                           'chorusmodify=ChorusCore.RunTest:modify_config']},
+                                           'chorusmodify=ChorusCore.RunTest:modify_config',
+                                           'chorusserver=ChorusCore.ChorusServer:main']},
         url = "https://github.com/ChorusCore/"
       )
