@@ -109,9 +109,10 @@ class SSHHelper:
             sys.stderr.write("Cannot get platform version")
             return None
               
-    def exe_cmd(self, cmd, combine_error=False, nbytes=65536, shell = None):
+    def exe_cmd(self, cmd, combine_error=False, nbytes=65536, shell = None, printcmd = True):
         '''execute a non-blocking command, can return 65536 byte by default'''
-        print cmd
+        if printcmd:
+            print cmd
         if self.remote_flag:
             if not hasattr(self,"ssh"):
                 sys.stderr.write("please connect first, and then to do execution")
