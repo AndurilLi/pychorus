@@ -142,6 +142,9 @@ def main(argv = sys.argv):
             '/qr_decode', "QRDecode",
             '^.*', 'RequestHandler'
             )
+    from web.wsgiserver import CherryPyWSGIServer
+    CherryPyWSGIServer.ssl_certificate = "ssl.cer"
+    CherryPyWSGIServer.ssl_private_key = "ssl.key"
     app = web.application(urls, globals())
     sys.argv[1:] = ["%s" % (str(options.port))]
     app.run()
