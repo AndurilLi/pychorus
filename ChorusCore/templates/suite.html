@@ -536,7 +536,7 @@
 				document.write('<div><div class="textalign">Output Path: </div><input type="text" id="output_path" value="{{ bsinfo.output_path }}" size="100"></div><br>');
 				document.write('<div><div class="textalign">Baseline Path: </div><input type="text" id="baseline_path" value="{{ bsinfo.baseline_path }}" size="100"></div><br>');
 				if (protocol == "http:" || protocol == "https:"){
-					document.write('<div><div class="textalign">CI Job Link: </div><input type="text" name="ci_link" value="{{ bsinfo.ci_link }}" size="100"></div><br>');
+					document.write('<div><div class="textalign">CI Job Link: </div><input type="text" id="ci_link" value="{{ bsinfo.ci_link }}" size="100"></div><br>');
 					document.write('<div align="right"><input type="button" onclick="update_baselines_remote()" value="Update baselines in SVN"></div>');
 				}else if(protocol == "file:"){
 					document.write('<div align="right"><input type="button" onclick="update_baselines_local()" value="Update baselines in local"></div>');
