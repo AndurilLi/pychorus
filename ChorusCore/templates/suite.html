@@ -67,12 +67,10 @@
         		data.baseline = baseline;
         		data.svnlink = document.getElementById("svnlink").value;
         		data.comment = document.getElementById("comment").value;
-        		// data.username = document.getElementById("username").value;
-        		// data.password = document.getElementById("password").value;
         		data.output_path = document.getElementById("output_path").value;
         		data.baseline_path = document.getElementById("baseline_path").value;
         		data.ci_link = document.getElementById("ci_link").value;
-        		data.suite_name = result.name;
+        		data.suite_name = "{{ result.name }}";
         		content = JSON.stringify(data);
         		url = baseurl + path + "?data=" + encodeURIComponent(content);
 				httpGet(url);
@@ -102,7 +100,7 @@
         		}
         		data.output_path = document.getElementById("output_path").value;
         		data.baseline_path = document.getElementById("baseline_path").value;
-        		data.suite_name = result.name;
+        		data.suite_name = "{{ result.name }}";
         		content = JSON.stringify(data);
         		url = baseurl + path + "?data=" + encodeURIComponent(content);
 				httpGet(url);
@@ -375,7 +373,11 @@
 			                                        </div>
 			                                        <div class="TextCellShow">
 			                                        	<pre>
-			                                        	<ul><script>var theInput = JSON.parse('{{cp.detail.basevalue}}');var duration = JSON.stringify(theInput, null, 4);document.write(duration);</script></ul>   
+			                                        	<ul><script>
+			                                        	var theInput = JSON.parse('{{cp.detail.basevalue}}');
+			                                        	var duration = JSON.stringify(theInput, null, 4);
+			                                        	document.write(duration);
+			                                        	</script></ul>   
       													</pre>
 													</div>												
 			                                        </td>
@@ -390,7 +392,11 @@
 			                                        </div>
 			                                        <div class="TextCellShow">
 			                                        	<pre>
-			                                        	<ul><script>var theInput = JSON.parse('{{ cp.detail.realvalue }}');var duration = JSON.stringify(theInput, null, 4);document.write(duration);</script></ul>   
+			                                        	<ul><script>
+			                                        	var theInput = JSON.parse('{{ cp.detail.realvalue }}');
+			                                        	var duration = JSON.stringify(theInput, null, 4);
+			                                        	document.write(duration);
+			                                        	</script></ul>   
       													</pre>
 													</div>												
 			                                        </td>
@@ -405,7 +411,9 @@
 			                                        <div class="TextCellShow">
 							                            <p class="visualdiff" id="visualdiff_{{ cp.name }}">						                            	
 							                            </p>			                                        	
-	      												<script>compare_json(JSON.parse('{{ cp.detail.basevalue }}'),JSON.parse('{{ cp.detail.realvalue }}'), '#visualdiff_{{ cp.name }}');</script>
+	      												<script>
+	      												compare_json(JSON.parse('{{ cp.detail.basevalue }}'), JSON.parse('{{ cp.detail.realvalue }}'), '#visualdiff_{{ cp.name }}');
+	      												</script>
 													</div>
 													
 													</td>
@@ -431,7 +439,13 @@
 				                                        </div>
 				                                        <div class="TextCellShow">
 				                                        	<pre>
-				                                        	<ul><script>var theInput = JSON.parse('{{cp.detail.api}}');var duration = JSON.stringify(theInput, null, 4);document.write(duration);</script></ul>   
+				                                        	<ul>
+				                                        		<script>
+				                                        		var theInput = JSON.parse('{{ cp.detail.api }}');
+				                                        		var duration = JSON.stringify(theInput, null, 4);
+				                                        		document.write(duration);
+				                                        		</script>
+				                                        	</ul>   
 	      													</pre>
 														</div>												
 				                                        </td>
@@ -446,7 +460,13 @@
 				                                        </div>
 				                                        <div class="TextCellShow">
 				                                        	<pre>
-				                                        	<ul><script>var theInput = JSON.parse('{{cp.detail.basevalue}}');var duration = JSON.stringify(theInput, null, 4);document.write(duration);</script></ul>   
+				                                        	<ul>
+				                                        		<script>
+				                                        		var theInput = JSON.parse('{{cp.detail.basevalue}}');
+				                                        		var duration = JSON.stringify(theInput, null, 4);
+				                                        		document.write(duration);
+				                                        		</script>
+				                                        	</ul>   
 	      													</pre>
 														</div>												
 				                                        </td>
@@ -461,7 +481,11 @@
 				                                        </div>
 				                                        <div class="TextCellShow">
 				                                        	<pre>
-				                                        	<ul><script>var theInput = JSON.parse('{{cp.detail.realvalue}}');var duration = JSON.stringify(theInput, null, 4);document.write(duration);</script></ul>   
+				                                        	<ul><script>
+				                                        	var theInput = JSON.parse('{{cp.detail.realvalue}}');
+				                                        	var duration = JSON.stringify(theInput, null, 4);
+				                                        	document.write(duration);
+				                                        	</script></ul>   
 	      													</pre>
 														</div>												
 				                                        </td>
@@ -476,7 +500,9 @@
 				                                        <div class="TextCellShow">
 								                            <p class="visualdiff" id="visualdiff_{{ cp.name }}">						                            	
 								                            </p>			                                        	
-		      												<script>compare_json(JSON.parse('{{cp.detail.basevalue}}'),JSON.parse('{{cp.detail.realvalue}}'), '#visualdiff_{{ cp.name }}');</script>
+		      												<script>
+		      												compare_json(JSON.parse('{{cp.detail.basevalue}}'), JSON.parse('{{cp.detail.realvalue}}'), '#visualdiff_{{ cp.name }}');
+		      												</script>
 														</div>
 														
 														</td>
@@ -506,8 +532,6 @@
 				{% if bsinfo.svn_baseline_link %}
 					document.write('<div><div class="textalign">SVN Link: </div><input type="text" id="svnlink" value="{{ bsinfo.svn_baseline_link }}" size="100"></div><br>');
 					document.write('<div><div class="textalign">SVN Comments: </div><input type="text" id="comment" placeholder="Enter svn checkin comments" size="100"></div><br>');
-					//document.write('<div><div class="textalign">SVN UserName: </div><input type="text" id="username" placeholder="Enter svn username, you can leave it blank if you update it in local" size="100"></div><br>');
-					//document.write('<div><div class="textalign">SVN Password: </div><input type="password" id="password" placeholder="Enter svn password, you can leave it blank if you update it in local" size="100"></div><br>');
 				{% endif %}
 				document.write('<div><div class="textalign">Output Path: </div><input type="text" id="output_path" value="{{ bsinfo.output_path }}" size="100"></div><br>');
 				document.write('<div><div class="textalign">Baseline Path: </div><input type="text" id="baseline_path" value="{{ bsinfo.baseline_path }}" size="100"></div><br>');
