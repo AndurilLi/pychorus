@@ -32,6 +32,9 @@ class ProjectConfiguration:
         self.parser.add_option("-d","--directory", dest="directory",
                                default=None,
                                help="Current working directory full path, which contains the Config/Testsuite/Baseline folder, if you are in the default directory, you can omit this option")
+        self.parser.add_option("--xml", dest="xml", 
+                               default=None,
+                               help="give a configuration XML file which define the test execution order. And other cofiguration in scipts/config file will be ignored")
         
     def setup(self, argv=[]):
         if not hasattr(self,"parser"):
@@ -41,6 +44,7 @@ class ProjectConfiguration:
         self.set_output_folder()
         self.set_logserver()
         self.set_configfile()
+        self.set_xml_file()
     
     def set_working_directory(self):
         if self.options.directory:
@@ -71,6 +75,19 @@ class ProjectConfiguration:
                                  colorconsole = False if not hasattr(self,"options") else self.options.color)
         ChorusGlobals.set_logserver(self.logserver)
         ChorusGlobals.set_logger(self.logserver.get_logger())
+    
+    def set_xml_file(self):
+        if self.options.xml:
+            print self.options.xml
+            if os.path.isfile(self.options.xml):
+                if str(self.options.xml).endswith(".xml"):
+                    ChorusGlobals.set_xml_file(self.options.xml)
+                    return
+                else:
+                    print "The test execution configuration file should be an XML file"
+            else:
+                print "Can't find xml file %s" % (str(self.options.xml))
+        ChorusGlobals.set_xml_file(None)
         
 #     def close_logserver(self):
 #         self.logserver.close_logger()

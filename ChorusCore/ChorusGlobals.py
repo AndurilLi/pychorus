@@ -133,3 +133,11 @@ def set_knownissuelist(issue_dict):
 def get_knownissuelist():
     '''Return known issue list'''
     return known_issue_list
+
+def set_xml_file(file_name):
+    global xml_file_name
+    xml_file_name = file_name
+
+def get_xml_file():
+    return xml_file_name
+    

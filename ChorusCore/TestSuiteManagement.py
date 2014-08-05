@@ -27,6 +27,10 @@ class TestSuiteManagement:
         self.logger = ChorusGlobals.get_logger()
         self.config = ChorusGlobals.get_configinfo()
         ChorusGlobals.init_testresult()
+        if ChorusGlobals.get_xml_file():
+            print "get xml file"
+        else:
+            print "can't get xml file"
         self.result = ChorusGlobals.get_testresult()
         self.suite_dict = self.get_test_mapping()
         self.filter_test_mapping()

@@ -54,6 +54,9 @@ def modify_config(argv = sys.argv):
     parser.add_option("-d","--directory", dest="directory",
                       default=None,
                       help="Current working directory full path, which contains the Config/Testsuite/Baseline folder, if you are in the default directory, you can omit this option")
+    parser.add_option("--xml", dest="xml", 
+                     default=None,
+                     help="give a configuration XML file which define the test execution order. And other cofiguration in scipts/config file will be ignored")
     options, argv = parser.parse_args(list(argv))
     if options.directory:
         if os.path.isdir(options.directory):
