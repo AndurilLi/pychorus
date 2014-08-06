@@ -78,10 +78,10 @@ class ProjectConfiguration:
     
     def set_xml_file(self):
         if self.options.xml:
-            print self.options.xml
             if os.path.isfile(self.options.xml):
                 if str(self.options.xml).endswith(".xml"):
                     ChorusGlobals.set_xml_file(self.options.xml)
+                    print "Load test execution infomation from file %s"%(str(self.options.xml))
                     return
                 else:
                     print "The test execution configuration file should be an XML file"
