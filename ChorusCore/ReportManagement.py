@@ -134,7 +134,7 @@ class ReportManagement:
             self.updateinfo["ci_link"] = os.environ["BUILD_URL"] + "HTML_Report"
         config = ChorusGlobals.get_configinfo()
         self.updateinfo["chorus_server"] = config.get("Chorus_Server") or os.environ.get("Chorus_Server")
-        self.updateinfo["chorus_home"] = config.get("Chorus_Home") or os.environ.get("Chorus_Home") or "https://localhost:8765"
+        self.updateinfo["chorus_home"] = config.get("Chorus_Home") or os.environ.get("Chorus_Home") or "http://localhost:8765"
         if self.updateinfo["chorus_server"] and self.updateinfo["chorus_server"].endswith("/"):
             self.updateinfo["chorus_server"] = self.updateinfo["chorus_server"][:-1]
         if self.updateinfo["chorus_home"].endswith("/"):

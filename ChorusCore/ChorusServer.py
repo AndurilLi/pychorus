@@ -55,23 +55,31 @@ class UpdateBaseline:
                 ci_link = None
                 baseline_path = Utils.get_filestr(baseline_paths)
                 os.chdir(baseline_path)
+                if svnflag:
+                    result = helper.exe_cmd("svn revert -R .")
+                    if result.code != 0:
+                        return "svn revert failed %s" % result.stderr
+                    result = helper.exe_cmd("svn up .")
+                    if result.code != 0:
+                        return "svn update failed %s" % result.stderr
             else:
                 ci_link = data["ci_link"]
                 job_name = ci_link.split("/")[-3]
-                work_path = Utils.get_filestr(job_name)
-                baseline_path = os.path.join(work_path, baseline_paths[-1])
+                work_path = os.path.join(Constants.workdirectory, job_name)
+                baseline_path = os.path.join(work_path, os.path.split(data["baseline_path"].replace("\\\\","\\"))[-1])
                 if os.path.exists(baseline_path):
                     os.chdir(baseline_path)
                     result = helper.exe_cmd("svn up . --username=%s --password=%s" % (SVNAccount.username, SVNAccount.password),printcmd=False)
                     if result.code != 0:
-                        raise Exception("svn up failed")
+                        return "svn update failed %s" % result.stderr
                 else:
+                    os.mkdir(work_path)
                     os.chdir(work_path)
                     result = helper.exe_cmd("svn co %s --username=%s --password=%s" % (data["svnlink"],SVNAccount.username, SVNAccount.password),printcmd=False)
                     if result.code != 0:
-                        raise Exception("svn checkout failed")
+                        return "svn checkout failed %s" % result.stderr
                     os.chdir(baseline_path)
-                baseline_paths = os.path.split(baseline_path) + [suitename]
+                baseline_paths = os.path.split(os.path.join(baseline_path,suitename))
             base_filename = suitename + ".base"
             baseline_caselist = Utils.get_json_from_file(baseline_paths, base_filename)
             if not ci_link:
@@ -79,10 +87,10 @@ class UpdateBaseline:
             else:
                 ci_basefile = ci_link+"/"+suitename+"/"+base_filename
                 api = Request(method="GET", base_url=ci_basefile)
-                resp, content = api.send()
-                if resp["status"]!="200":
+                resp = api.send()
+                if resp.result["status"]!="200":
                     return "Invalid CI link %s" % ci_basefile
-                output_caselist = Utils.get_dict_from_json(content)
+                output_caselist = resp.result["data"]
             for baseline in data["baseline"]:
                 casename, assertionname = baseline.split("/")
                 if output_caselist[casename][assertionname].get("image_type"):
@@ -95,10 +103,10 @@ class UpdateBaseline:
             if svnflag:
                 result = helper.exe_cmd("svn add . --force")
                 if result.code != 0:
-                    raise Exception("svn add failed")
+                    return "svn add failed %s" % result.stderr
                 result = helper.exe_cmd('''svn ci . -m "%s"''' % data["comment"])
                 if result.code != 0:
-                    raise Exception("svn checkin failed")
+                    return "svn checkin failed %s" % result.stderr
             web.ctx.headers = [("Access-Control-Allow-Origin","*")]
             return 'Update Successful'
         except Exception, e:
@@ -142,9 +150,9 @@ def main(argv = sys.argv):
             '/qr_decode', "QRDecode",
             '^.*', 'RequestHandler'
             )
-    from web.wsgiserver import CherryPyWSGIServer
-    CherryPyWSGIServer.ssl_certificate = "ssl.cer"
-    CherryPyWSGIServer.ssl_private_key = "ssl.key"
+#     from web.wsgiserver import CherryPyWSGIServer
+#     CherryPyWSGIServer.ssl_certificate = "ssl.cer"
+#     CherryPyWSGIServer.ssl_private_key = "ssl.key"
     app = web.application(urls, globals())
     sys.argv[1:] = ["%s" % (str(options.port))]
     app.run()
