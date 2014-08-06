@@ -12,104 +12,6 @@
     <script type='text/javascript' src='Static/jsondiff/jsondiffpatch.html.js'></script>
     <script type='text/javascript' src='Static/jsondiff/diff_match_patch_uncompressed.js'></script>
 	<link rel="stylesheet" href="Static/jsondiff/jsondiffpatch.html.css" type="text/css" />
-	<script type="text/javascript">
-		var xmlHttp;
-		function createXmlHttpRequest(){    
-		    if(window.ActiveXObject){
-		        return new ActiveXObject("Microsoft.XMLHTTP");    
-		    }else if(window.XMLHttpRequest){
-		        return new XMLHttpRequest();    
-		    }    
-		}    
-		function httpGet(theUrl)
-    	{
-    		xmlHttp = null;
-    		xmlHttp = new XMLHttpRequest();
-    		xmlHttp.onreadystatechange=state_Change;
-    		xmlHttp.open("GET", theUrl, true);
-    		xmlHttp.send( null );
-    	}
-    	function state_Change()
-		{
-			if (xmlHttp.readyState==4)
-  			{
-  				if (xmlHttp.status!=404)
-    			{
-    			    alert(xmlHttp.responseText);
-    			}
-  				else
-    			{
-    				alert("Problem on the server setting");
-    			}
-  			}
-		}
-		function update_baselines_remote(){
-    		var confirmflag = confirm("Do you want to update baselines?");
-    		if (confirmflag){
-        		var cp=document.getElementsByName("UpdateBaseline");  
-        		var baseurl = "{{ bsinfo.chorus_server }}";
-        		if (baseurl == null){
-        			alert("Please specify a Chorus_Server in either config or environment parameters");
-        			return;
-        		}
-        		var path="/update_baseline";
-        		var baseline = [];
-        		for(var i=0;i<cp.length;i++){
-           			if(cp[i].checked){
-           				baseline.push(cp[i].value);
-            		}        
-        		}
-        		if (baseline.length == 0){
-        			alert("Please select baselines to be updated!");
-        			return;
-        		}
-        		var data = new Object();
-        		data.baseline = baseline;
-        		data.svnlink = document.getElementById("svnlink").value;
-        		data.comment = document.getElementById("comment").value;
-        		// data.username = document.getElementById("username").value;
-        		// data.password = document.getElementById("password").value;
-        		data.output_path = document.getElementById("output_path").value;
-        		data.baseline_path = document.getElementById("baseline_path").value;
-        		data.ci_link = document.getElementById("ci_link").value;
-        		data.suite_name = result.name;
-        		content = JSON.stringify(data);
-        		url = baseurl + path + "?data=" + encodeURIComponent(content);
-				httpGet(url);
-    		}
-		}
-		function update_baselines_local(){
-			var confirmflag = confirm("Do you want to update baselines?");
-    		if (confirmflag){
-    			var cp=document.getElementsByName("UpdateBaseline");  
-        		var baseurl = "{{ bsinfo.chorus_home }}";
-        		var path="/update_baseline";
-        		var baseline = [];
-        		for(var i=0;i<cp.length;i++){
-           			if(cp[i].checked){
-           				baseline.push(cp[i].value);
-            		}        
-        		}
-        		if (baseline.length == 0){
-        			alert("Please select baselines to be updated!");
-        			return;
-        		}
-        		var data = new Object();
-        		data.baseline = baseline;
-        		if (document.getElementById("svnlink")){
-        			data.svnlink = document.getElementById("svnlink").value;
-        			data.comment = document.getElementById("comment").value;
-        		}
-        		data.output_path = document.getElementById("output_path").value;
-        		data.baseline_path = document.getElementById("baseline_path").value;
-        		data.suite_name = result.name;
-        		content = JSON.stringify(data);
-        		url = baseurl + path + "?data=" + encodeURIComponent(content);
-				httpGet(url);
-    		}
-		}
-	
-	</script>
 </head>
 <body>
     <script>
@@ -375,7 +277,11 @@
 			                                        </div>
 			                                        <div class="TextCellShow">
 			                                        	<pre>
-			                                        	<ul><script>var theInput = JSON.parse('{{cp.detail.basevalue}}');var duration = JSON.stringify(theInput, null, 4);document.write(duration);</script></ul>   
+			                                        	<ul><script>
+			                                        	var theInput = JSON.parse('{{cp.detail.basevalue}}');
+			                                        	var duration = JSON.stringify(theInput, null, 4);
+			                                        	document.write(duration);
+			                                        	</script></ul>   
       													</pre>
 													</div>												
 			                                        </td>
@@ -390,7 +296,11 @@
 			                                        </div>
 			                                        <div class="TextCellShow">
 			                                        	<pre>
-			                                        	<ul><script>var theInput = JSON.parse('{{ cp.detail.realvalue }}');var duration = JSON.stringify(theInput, null, 4);document.write(duration);</script></ul>   
+			                                        	<ul><script>
+			                                        	var theInput = JSON.parse('{{ cp.detail.realvalue }}');
+			                                        	var duration = JSON.stringify(theInput, null, 4);
+			                                        	document.write(duration);
+			                                        	</script></ul>   
       													</pre>
 													</div>												
 			                                        </td>
@@ -405,7 +315,9 @@
 			                                        <div class="TextCellShow">
 							                            <p class="visualdiff" id="visualdiff_{{ cp.name }}">						                            	
 							                            </p>			                                        	
-	      												<script>compare_json(JSON.parse('{{ cp.detail.basevalue }}'),JSON.parse('{{ cp.detail.realvalue }}'), '#visualdiff_{{ cp.name }}');</script>
+	      												<script>
+	      												compare_json(JSON.parse('{{ cp.detail.basevalue }}'), JSON.parse('{{ cp.detail.realvalue }}'), '#visualdiff_{{ cp.name }}');
+	      												</script>
 													</div>
 													
 													</td>
@@ -431,7 +343,13 @@
 				                                        </div>
 				                                        <div class="TextCellShow">
 				                                        	<pre>
-				                                        	<ul><script>var theInput = JSON.parse('{{cp.detail.api}}');var duration = JSON.stringify(theInput, null, 4);document.write(duration);</script></ul>   
+				                                        	<ul>
+				                                        		<script>
+				                                        		var theInput = JSON.parse('{{ cp.detail.api }}');
+				                                        		var duration = JSON.stringify(theInput, null, 4);
+				                                        		document.write(duration);
+				                                        		</script>
+				                                        	</ul>   
 	      													</pre>
 														</div>												
 				                                        </td>
@@ -446,7 +364,13 @@
 				                                        </div>
 				                                        <div class="TextCellShow">
 				                                        	<pre>
-				                                        	<ul><script>var theInput = JSON.parse('{{cp.detail.basevalue}}');var duration = JSON.stringify(theInput, null, 4);document.write(duration);</script></ul>   
+				                                        	<ul>
+				                                        		<script>
+				                                        		var theInput = JSON.parse('{{cp.detail.basevalue}}');
+				                                        		var duration = JSON.stringify(theInput, null, 4);
+				                                        		document.write(duration);
+				                                        		</script>
+				                                        	</ul>   
 	      													</pre>
 														</div>												
 				                                        </td>
@@ -461,7 +385,11 @@
 				                                        </div>
 				                                        <div class="TextCellShow">
 				                                        	<pre>
-				                                        	<ul><script>var theInput = JSON.parse('{{cp.detail.realvalue}}');var duration = JSON.stringify(theInput, null, 4);document.write(duration);</script></ul>   
+				                                        	<ul><script>
+				                                        	var theInput = JSON.parse('{{cp.detail.realvalue}}');
+				                                        	var duration = JSON.stringify(theInput, null, 4);
+				                                        	document.write(duration);
+				                                        	</script></ul>   
 	      													</pre>
 														</div>												
 				                                        </td>
@@ -476,7 +404,9 @@
 				                                        <div class="TextCellShow">
 								                            <p class="visualdiff" id="visualdiff_{{ cp.name }}">						                            	
 								                            </p>			                                        	
-		      												<script>compare_json(JSON.parse('{{cp.detail.basevalue}}'),JSON.parse('{{cp.detail.realvalue}}'), '#visualdiff_{{ cp.name }}');</script>
+		      												<script>
+		      												compare_json(JSON.parse('{{cp.detail.basevalue}}'), JSON.parse('{{cp.detail.realvalue}}'), '#visualdiff_{{ cp.name }}');
+		      												</script>
 														</div>
 														
 														</td>
@@ -506,16 +436,89 @@
 				{% if bsinfo.svn_baseline_link %}
 					document.write('<div><div class="textalign">SVN Link: </div><input type="text" id="svnlink" value="{{ bsinfo.svn_baseline_link }}" size="100"></div><br>');
 					document.write('<div><div class="textalign">SVN Comments: </div><input type="text" id="comment" placeholder="Enter svn checkin comments" size="100"></div><br>');
-					//document.write('<div><div class="textalign">SVN UserName: </div><input type="text" id="username" placeholder="Enter svn username, you can leave it blank if you update it in local" size="100"></div><br>');
-					//document.write('<div><div class="textalign">SVN Password: </div><input type="password" id="password" placeholder="Enter svn password, you can leave it blank if you update it in local" size="100"></div><br>');
 				{% endif %}
 				document.write('<div><div class="textalign">Output Path: </div><input type="text" id="output_path" value="{{ bsinfo.output_path }}" size="100"></div><br>');
 				document.write('<div><div class="textalign">Baseline Path: </div><input type="text" id="baseline_path" value="{{ bsinfo.baseline_path }}" size="100"></div><br>');
 				if (protocol == "http:" || protocol == "https:"){
-					document.write('<div><div class="textalign">CI Job Link: </div><input type="text" name="ci_link" value="{{ bsinfo.ci_link }}" size="100"></div><br>');
-					document.write('<div align="right"><input type="button" onclick="update_baselines_remote()" value="Update baselines in SVN"></div>');
+					document.write('<div><div class="textalign">CI Job Link: </div><input type="text" id="ci_link" value="{{ bsinfo.ci_link }}" size="100"></div><br>');
+					document.write('<div align="right"><input type="button" onclick="update_baselines_remote()" value="Generate Update Link"></div>');
 				}else if(protocol == "file:"){
-					document.write('<div align="right"><input type="button" onclick="update_baselines_local()" value="Update baselines in local"></div>');
+					document.write('<div align="right"><input type="button" onclick="update_baselines_local()" value="Generate Update Link"></div>');
+				}
+				document.write('<div align="right"><a href="" id="update_baseline" style="display:none">Update Baseline</a>');
+				function update_baselines_remote(){
+		    		var confirmflag = confirm("Do you want to update baselines?");
+		    		if (confirmflag){
+		        		var cp=document.getElementsByName("UpdateBaseline");  
+		        		var baseurl = "{{ bsinfo.chorus_server }}";
+						if (baseurl == null){
+		        			alert("Please specify a Chorus_Server in either config or environment parameters");
+		        			return;
+		        		}
+		        		var path="/update_baseline";
+		        		var baseline = [];
+		        		for(var i=0;i<cp.length;i++){
+		           			if(cp[i].checked){
+		           				baseline.push(cp[i].value);
+		            		}        
+		        		}
+		        		if (baseline.length == 0){
+		        			alert("Please select baselines to be updated!");
+		        			return;
+		        		}
+		        		var data = new Object();
+		        		data.baseline = baseline;
+		        		data.svnlink = document.getElementById("svnlink").value;
+		        		data.comment = document.getElementById("comment").value;
+		        		data.output_path = document.getElementById("output_path").value;
+		        		data.baseline_path = document.getElementById("baseline_path").value;
+		        		data.ci_link = document.getElementById("ci_link").value;
+		        		data.suite_name = "{{ result.name }}";
+		        		content = JSON.stringify(data);
+		        		url = baseurl + path + "?data=" + encodeURIComponent(content);
+		        		link = document.getElementById("update_baseline");
+		        		link.innerHTML = "Update Remote Baseline in SVN";
+		        		link.style="display:";
+		        		link.href = url;
+		    		}
+				}
+				function update_baselines_local(){
+					var confirmflag = confirm("Do you want to update baselines?");
+		    		if (confirmflag){
+		    			var cp=document.getElementsByName("UpdateBaseline");  
+		        		var baseurl = "{{ bsinfo.chorus_home }}";
+		        		var path="/update_baseline";
+		        		var baseline = [];
+		        		for(var i=0;i<cp.length;i++){
+		           			if(cp[i].checked){
+		           				baseline.push(cp[i].value);
+		            		}        
+		        		}
+		        		if (baseline.length == 0){
+		        			alert("Please select baselines to be updated!");
+		        			return;
+		        		}
+		        		var data = new Object();
+		        		data.baseline = baseline;
+		        		if (document.getElementById("svnlink")){
+		        			data.svnlink = document.getElementById("svnlink").value;
+		        			data.comment = document.getElementById("comment").value;
+		        		}
+		        		data.output_path = document.getElementById("output_path").value;
+		        		data.baseline_path = document.getElementById("baseline_path").value;
+		        		data.suite_name = "{{ result.name }}";
+		        		content = JSON.stringify(data);
+		        		url = baseurl + path + "?data=" + encodeURIComponent(content);
+		        		link = document.getElementById("update_baseline");
+		        		link.style="display:";
+		        		link.href = url;
+		        		if (document.getElementById("svnlink")){
+		        			link.innerHTML = "Update Local Baseline in SVN";
+		        		}
+		        		else{
+		        			link.innerHTML = "Update Local Baseline without Checkin";
+		        		}
+		    		}
 				}
 			</script>             
         </div>

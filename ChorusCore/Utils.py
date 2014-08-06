@@ -169,6 +169,7 @@ def get_json_from_file(paths = None,filename = None):
         else:
             filestream = open(get_filestr(filename))
         jsonobj = json.load(filestream,object_hook=_decode_dict)
+        filestream.close()
         return jsonobj
     except Exception,e:
         traceback.print_exc()
@@ -332,7 +333,7 @@ def get_svninfo():
     from SSHHelper import SSHHelper
     ssh = SSHHelper("localhost")
     try:
-        result = ssh.exe_cmd("svn info --force-interactive .", shell=True)
+        result = ssh.exe_cmd("svn info", shell=True)
     except Exception, e:
         traceback.print_exc()
         print "svn get failed with error %s" % str(e)
