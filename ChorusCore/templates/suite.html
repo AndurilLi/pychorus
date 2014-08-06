@@ -447,78 +447,72 @@
 				}
 				document.write('<div align="right"><a href="" id="update_baseline" style="display:none">Update Baseline</a>');
 				function update_baselines_remote(){
-		    		var confirmflag = confirm("Do you want to update baselines?");
-		    		if (confirmflag){
-		        		var cp=document.getElementsByName("UpdateBaseline");  
-		        		var baseurl = "{{ bsinfo.chorus_server }}";
-						if (baseurl == null){
-		        			alert("Please specify a Chorus_Server in either config or environment parameters");
-		        			return;
-		        		}
-		        		var path="/update_baseline";
-		        		var baseline = [];
-		        		for(var i=0;i<cp.length;i++){
-		           			if(cp[i].checked){
-		           				baseline.push(cp[i].value);
-		            		}        
-		        		}
-		        		if (baseline.length == 0){
-		        			alert("Please select baselines to be updated!");
-		        			return;
-		        		}
-		        		var data = new Object();
-		        		data.baseline = baseline;
-		        		data.svnlink = document.getElementById("svnlink").value;
-		        		data.comment = document.getElementById("comment").value;
-		        		data.output_path = document.getElementById("output_path").value;
-		        		data.baseline_path = document.getElementById("baseline_path").value;
-		        		data.ci_link = document.getElementById("ci_link").value;
-		        		data.suite_name = "{{ result.name }}";
-		        		content = JSON.stringify(data);
-		        		url = baseurl + path + "?data=" + encodeURIComponent(content);
-		        		link = document.getElementById("update_baseline");
-		        		link.innerHTML = "Update Remote Baseline in SVN";
-		        		link.style="display:";
-		        		link.href = url;
-		    		}
+	        		var cp=document.getElementsByName("UpdateBaseline");  
+	        		var baseurl = "{{ bsinfo.chorus_server }}";
+					if (baseurl == null){
+	        			alert("Please specify a Chorus_Server in either config or environment parameters");
+	        			return;
+	        		}
+	        		var path="/update_baseline";
+	        		var baseline = [];
+	        		for(var i=0;i<cp.length;i++){
+	           			if(cp[i].checked){
+	           				baseline.push(cp[i].value);
+	            		}        
+	        		}
+	        		if (baseline.length == 0){
+	        			alert("Please select baselines to be updated!");
+	        			return;
+	        		}
+	        		var data = new Object();
+	        		data.baseline = baseline;
+	        		data.svnlink = document.getElementById("svnlink").value;
+	        		data.comment = document.getElementById("comment").value;
+	        		data.output_path = document.getElementById("output_path").value;
+	        		data.baseline_path = document.getElementById("baseline_path").value;
+	        		data.ci_link = document.getElementById("ci_link").value;
+	        		data.suite_name = "{{ result.name }}";
+	        		content = JSON.stringify(data);
+	        		url = baseurl + path + "?data=" + encodeURIComponent(content);
+	        		link = document.getElementById("update_baseline");
+	        		link.innerHTML = "Update Remote Baseline in SVN";
+	        		link.style="display:";
+	        		link.href = url;
 				}
 				function update_baselines_local(){
-					var confirmflag = confirm("Do you want to update baselines?");
-		    		if (confirmflag){
-		    			var cp=document.getElementsByName("UpdateBaseline");  
-		        		var baseurl = "{{ bsinfo.chorus_home }}";
-		        		var path="/update_baseline";
-		        		var baseline = [];
-		        		for(var i=0;i<cp.length;i++){
-		           			if(cp[i].checked){
-		           				baseline.push(cp[i].value);
-		            		}        
-		        		}
-		        		if (baseline.length == 0){
-		        			alert("Please select baselines to be updated!");
-		        			return;
-		        		}
-		        		var data = new Object();
-		        		data.baseline = baseline;
-		        		if (document.getElementById("svnlink")){
-		        			data.svnlink = document.getElementById("svnlink").value;
-		        			data.comment = document.getElementById("comment").value;
-		        		}
-		        		data.output_path = document.getElementById("output_path").value;
-		        		data.baseline_path = document.getElementById("baseline_path").value;
-		        		data.suite_name = "{{ result.name }}";
-		        		content = JSON.stringify(data);
-		        		url = baseurl + path + "?data=" + encodeURIComponent(content);
-		        		link = document.getElementById("update_baseline");
-		        		link.style="display:";
-		        		link.href = url;
-		        		if (document.getElementById("svnlink")){
-		        			link.innerHTML = "Update Local Baseline in SVN";
-		        		}
-		        		else{
-		        			link.innerHTML = "Update Local Baseline without Checkin";
-		        		}
-		    		}
+	    			var cp=document.getElementsByName("UpdateBaseline");  
+	        		var baseurl = "{{ bsinfo.chorus_home }}";
+	        		var path="/update_baseline";
+	        		var baseline = [];
+	        		for(var i=0;i<cp.length;i++){
+	           			if(cp[i].checked){
+	           				baseline.push(cp[i].value);
+	            		}        
+	        		}
+	        		if (baseline.length == 0){
+	        			alert("Please select baselines to be updated!");
+	        			return;
+	        		}
+	        		var data = new Object();
+	        		data.baseline = baseline;
+	        		if (document.getElementById("svnlink")){
+	        			data.svnlink = document.getElementById("svnlink").value;
+	        			data.comment = document.getElementById("comment").value;
+	        		}
+	        		data.output_path = document.getElementById("output_path").value;
+	        		data.baseline_path = document.getElementById("baseline_path").value;
+	        		data.suite_name = "{{ result.name }}";
+	        		content = JSON.stringify(data);
+	        		url = baseurl + path + "?data=" + encodeURIComponent(content);
+	        		link = document.getElementById("update_baseline");
+	        		link.style="display:";
+	        		link.href = url;
+	        		if (document.getElementById("svnlink")){
+	        			link.innerHTML = "Update Local Baseline in SVN";
+	        		}
+	        		else{
+	        			link.innerHTML = "Update Local Baseline without Checkin";
+	        		}
 				}
 			</script>             
         </div>
