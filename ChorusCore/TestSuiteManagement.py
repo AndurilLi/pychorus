@@ -40,7 +40,6 @@ class TestSuiteManagement:
             self.get_testsuites()
         self.set_baselinepath()
         self.get_knownissues()
-        print self.suite_dict
         ChorusGlobals.set_suitedict(self.suite_dict)
     
     def load_testsuites_from_xml(self):
@@ -163,6 +162,7 @@ class TestSuiteManagement:
         
     def get_testsuites(self, sortflag=True):
         self.dependency_mapping = {"suites":{},"cases":{}}
+        self.suite_dependency_mapping = {}
         self.suites_in_scope = unittest.TestSuite()
         for suite_name in self.suite_dict.keys():
             self.check_suite_dependency(suite_name)
@@ -170,7 +170,8 @@ class TestSuiteManagement:
             self.logger.debug("include following suites for dependency: %s" % ",".join(self.dependency_mapping["suites"].keys()))
         if self.dependency_mapping["cases"]:
             self.logger.debug("include following cases for dependency: %s" % ",".join(self.dependency_mapping["cases"].keys()))
-        suite_list = sorted(self.suite_dict.keys()) if sortflag else self.suite_dict.keys()
+        #suite_list = sorted(self.suite_dict.keys()) if sortflag else self.suite_dict.keys()
+        suite_list = self.get_suite_list_order()
         for suite_name in suite_list:
             case_list = sorted(self.suite_dict[suite_name])
             self.load_suites_in_scope(suite_name, case_list)
@@ -178,6 +179,33 @@ class TestSuiteManagement:
             for insuite in self.suite_dict:
                 if len(self.suite_dict[insuite])>0:
                     self.logger.info("include testsuite %s cases: %s" % (insuite, ",".join(self.suite_dict[insuite])))
+                    
+    def get_suite_list_order(self):
+        self.suite_list = []
+        self.non_add_list = sorted(self.suite_dict.keys())
+        print self.non_add_list
+        while(len(self.non_add_list) > 0):
+            candidate_suite = self.non_add_list.pop(0)
+            print "pop %s"%(candidate_suite)
+            self.get_pre_order_suite(candidate_suite)
+        list = []
+        for s in self.suite_list:
+            if not s in list:
+                list.append(s)
+        return list
+
+    def get_pre_order_suite(self, candidate_suite):
+        if self.suite_dependency_mapping.has_key(candidate_suite):
+            for s in self.suite_dependency_mapping[candidate_suite]:
+                print "find de %s , cadidate %s"%(s,candidate_suite)
+                if s in self.non_add_list:
+                    self.get_pre_order_suite(s)
+                    if s in self.non_add_list:
+                        self.non_add_list.remove(s) 
+        self.suite_list.append(candidate_suite)
+        if candidate_suite in self.non_add_list:
+            self.non_add_list.remove(candidate_suite)
+        return    
     
     def get_testsuites_from_xml(self):
         self.suites_in_scope = unittest.TestSuite()
@@ -231,7 +259,9 @@ class TestSuiteManagement:
                     suite = None
                     del self.suite_dict[suite_name]
                 if hasattr(class_obj, "global_depends") and suite._tests:
+                    self.suite_dependency_mapping[suite_name] = []
                     for suite_name_depends in class_obj.global_depends:
+                        self.suite_dependency_mapping[suite_name].append(suite_name_depends)
                         if suite_name_depends not in self.suite_dict and suite_name_depends in self.raw_suite_dict:
                             self.check_suite_dependency(suite_name_depends)
                             self.dependency_mapping["suites"][suite_name_depends] = True
