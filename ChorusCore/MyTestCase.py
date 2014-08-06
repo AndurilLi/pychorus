@@ -111,10 +111,9 @@ class MyTestCase(unittest.TestCase):
                 for key, value in cases.iteritems():
                     mapping[key] = value.statusflag
             for d in self.depends:
-                from ChorusConstants import ResultStatus
                 if mapping.has_key(d) and not mapping[d]:
-                    msg = "Has failed dependency test case :" + str(d)
-                    self.assertEqual(True, False, msg)
+                    self.addCleanup(self.tearDown)
+                    raise Exception("Has failed dependency test case %s" %(str(d)))
         unittest.TestCase.setUp(self)
         
     @classmethod
@@ -197,16 +196,20 @@ class MyTestCase(unittest.TestCase):
         try:
             error_message = self._resultForDoCleanups.errors[0][1]
             error_type, error_content, error_line_info = Utils.parse_error(error_message)
-            self.result.cases[self._testMethodName].status = ResultStatus.CRASHED
-            self.result.cases[self._testMethodName].statusflag = False
-            self.result.status = ResultStatus.CRASHED
-            self.result.statusflag = False
-            self.result.unknownflag = True
+            if str(error_content).startswith("Has failed dependency test case"):
+                self.result.cases[self._testMethodName].status = ResultStatus.NOT_STARTED
+                self.result.cases[self._testMethodName].statusflag = False
+            else:
+                self.result.cases[self._testMethodName].status = ResultStatus.CRASHED
+                self.result.cases[self._testMethodName].statusflag = False
+                self.result.status = ResultStatus.CRASHED
+                self.result.statusflag = False
+                self.result.unknownflag = True
+                self.result.crash_cases += 1
+                self.logger.critical("CrashError: "+" - ".join([error_type, error_content, error_line_info]))
             self.result.cases[self._testMethodName].fail_message={"type":error_type,
                                                                   "content":error_content,
                                                                   "line_info":error_line_info}
-            self.result.crash_cases += 1
-            self.logger.critical("CrashError: "+" - ".join([error_type, error_content, error_line_info]))
             self._resultForDoCleanups.errors = []
         except Exception, e:
             self.logger.critical("parsing crash error failed by errors '%s'" % str(e))
