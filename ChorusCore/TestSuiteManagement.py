@@ -8,7 +8,7 @@ import Utils
 import unittest
 import inspect
 import ChorusGlobals
-import os
+import os, sys
 import importlib
 import time
 from ChorusConstants import ResultStatus, CommonConstants
@@ -23,23 +23,58 @@ class TestSuiteManagement:
     BASELINE_PATH = CommonConstants.BASELINE_PATH
     runner = []
     def __init__(self):
-        
         self.logger = ChorusGlobals.get_logger()
         self.config = ChorusGlobals.get_configinfo()
         ChorusGlobals.init_testresult()
-        if ChorusGlobals.get_xml_file():
-            print "get xml file"
-        else:
-            print "can't get xml file"
         self.result = ChorusGlobals.get_testresult()
-        self.suite_dict = self.get_test_mapping()
-        self.filter_test_mapping()
-        self.set_scope()
         self.get_project_run()
-        self.get_testsuites()
+        self.xml_file = ChorusGlobals.get_xml_file()
+        self.suite_dict = self.get_test_mapping()
+        if self.xml_file:
+            self.load_testsuites_from_xml()
+            self.get_testsuites_from_xml()
+        else:
+            print "Doesn't have xml file to specify test execution order"
+            self.filter_test_mapping()
+            self.set_scope()
+            self.get_testsuites()
         self.set_baselinepath()
         self.get_knownissues()
+        print self.suite_dict
         ChorusGlobals.set_suitedict(self.suite_dict)
+    
+    def load_testsuites_from_xml(self):
+        import xml.etree.ElementTree as ET
+        tree = ET.ElementTree(file=self.xml_file)
+        self.xml_list = []
+        suite_list = []
+        for ele in tree.iter(tag = "Suite"):
+            s_name = ele.attrib["name"]
+            if(self.suite_dict.has_key(s_name)):
+                mapping = {s_name:[]}
+                suite_list.append(s_name)
+                for e in ele.iter(tag = "Case"):
+                    c_name = e.attrib["name"]
+                    if c_name in self.suite_dict[s_name]:
+                        mapping[s_name].append(c_name)
+                    else:
+                        mesg = "Can't load test case %s in test suite %s" % (str(c_name), str(s_name))
+                        sys.stderr.write(mesg)
+                        sys.exit(1)
+                if len(mapping[s_name]) == 0:
+                    mapping[s_name]=self.suite_dict[s_name]
+                else:
+                    for c in self.suite_dict[s_name]:
+                        if not c in mapping[s_name]:
+                            self.suite_dict[s_name].remove(c)
+                self.xml_list.append(mapping)
+            else:
+                mesg = "Can't load test suite with name %s"%(str(s_name))
+                sys.stderr.write(mesg)
+                sys.exit(1)
+        for s in self.suite_dict.items():
+            if not s[0] in suite_list:
+                del self.suite_dict[s[0]]
     
     def get_knownissues(self):
         if os.environ.has_key(CommonConstants.KNOWN_ISSUE_KEY):
@@ -138,21 +173,36 @@ class TestSuiteManagement:
         suite_list = sorted(self.suite_dict.keys()) if sortflag else self.suite_dict.keys()
         for suite_name in suite_list:
             case_list = sorted(self.suite_dict[suite_name])
-            try:
-                suite_module = importlib.import_module("%s.%s" % (self.TESTSUITE_FOLDER, suite_name))
-            except Exception,e:
-                traceback.print_exc()
-                self.logger.critical("Cannot import suite %s in folder %s with error %s" % (suite_name,self.TESTSUITE_FOLDER,str(e)))
-                raise Exception("Cannot import suite %s in folder %s with error %s" % (suite_name,self.TESTSUITE_FOLDER,str(e)))
-            suite_classes = inspect.getmembers(suite_module)
-            for class_name, class_obj in suite_classes:
-                if class_name == suite_name:
-                    suite = unittest.TestSuite(map(class_obj,case_list))
-                    suite.name = suite_name
-                    self.suites_in_scope.addTest(suite)
-        for insuite in self.suite_dict:
-            if len(self.suite_dict[insuite])>0:
-                self.logger.info("include testsuite %s cases: %s" % (insuite, ",".join(self.suite_dict[insuite])))
+            self.load_suites_in_scope(suite_name, case_list)
+        if not self.xml_file:
+            for insuite in self.suite_dict:
+                if len(self.suite_dict[insuite])>0:
+                    self.logger.info("include testsuite %s cases: %s" % (insuite, ",".join(self.suite_dict[insuite])))
+    
+    def get_testsuites_from_xml(self):
+        self.suites_in_scope = unittest.TestSuite()
+        suite_list = []
+        for d in self.xml_list:
+            suite_list.append(d.keys()[0])
+        i = 0
+        for suite_name in suite_list:
+            case_list = self.xml_list[i][suite_name]
+            i = i + 1
+            self.load_suites_in_scope(suite_name, case_list)
+            
+    def load_suites_in_scope(self, suite_name = "", case_list = []):
+        try:
+            suite_module = importlib.import_module("%s.%s" % (self.TESTSUITE_FOLDER, suite_name))
+        except Exception,e:
+            traceback.print_exc()
+            self.logger.critical("Cannot import suite %s in folder %s with error %s" % (suite_name,self.TESTSUITE_FOLDER,str(e)))
+            raise Exception("Cannot import suite %s in folder %s with error %s" % (suite_name,self.TESTSUITE_FOLDER,str(e)))
+        suite_classes = inspect.getmembers(suite_module)
+        for class_name, class_obj in suite_classes:
+            if class_name == suite_name:
+                suite = unittest.TestSuite(map(class_obj,case_list))
+                suite.name = suite_name
+                self.suites_in_scope.addTest(suite)
     
     def check_suite_dependency(self, suite_name):
         try:
