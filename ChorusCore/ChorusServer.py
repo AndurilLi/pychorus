@@ -132,7 +132,8 @@ class UpdateBaseline(RequestHandler):
                     if result.code != 0:
                         return self.message_helper("svn update failed %s" % result.stderr, "200 OK")
                 else:
-                    os.mkdir(work_path)
+                    if not os.path.exists(work_path):
+                        os.mkdir(work_path)
                     os.chdir(work_path)
                     result = helper.exe_cmd("svn co %s --username=%s --password=%s --force" % (data["svnlink"],SVNAccount.username, SVNAccount.password), shell=True, printcmd=False)
                     if result.code != 0:
