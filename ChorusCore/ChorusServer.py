@@ -212,5 +212,3 @@ def main(argv = sys.argv):
     app = web.application(urls, globals())
     sys.argv[1:] = ["%s" % (str(options.port))]
     app.run()
-    
-main(sys.argv)
