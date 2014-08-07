@@ -115,14 +115,29 @@ class MyTestCase(unittest.TestCase):
                     self.addCleanup(self.tearDown)
                     raise Exception("Has failed dependency test case %s" %(str(d)))
         unittest.TestCase.setUp(self)
+    
+    @classmethod
+    def get_suite_dependency(cls):
+        if hasattr(cls, "global_depends"):
+            return getattr(cls, "global_depends")
+        else:
+            return []
         
     @classmethod
     def setUpClass(cls):        
         '''
         setUpClass is executed every time before run a test suite
         '''
-        cls.suite_starttime = time.time()
-        
+        suite_dependency = cls.get_suite_dependency()
+        if len(suite_dependency) > 0:
+            suites = ChorusGlobals.get_testresult().suites
+            mapping = {}
+            for key, value in suites.iteritems():
+                mapping[key] = value.statusflag
+            for d in suite_dependency:
+                if mapping.has_key(d) and not mapping[d]:
+                    raise Exception("Has failed dependency test suite %s" %(str(d)))   
+        cls.suite_starttime = time.time() 
         cls.logserver = ChorusGlobals.get_logserver()
         cls.logserver.flush_console()
         super(MyTestCase,cls).setUpClass()
@@ -199,6 +214,7 @@ class MyTestCase(unittest.TestCase):
             if str(error_content).startswith("Has failed dependency test case"):
                 self.result.cases[self._testMethodName].status = ResultStatus.NOT_STARTED
                 self.result.cases[self._testMethodName].statusflag = False
+                self.logger.critical("CaseDependencyError: "+" - ".join([error_type, error_content, error_line_info]))
             else:
                 self.result.cases[self._testMethodName].status = ResultStatus.CRASHED
                 self.result.cases[self._testMethodName].statusflag = False

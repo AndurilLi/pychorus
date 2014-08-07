@@ -96,7 +96,15 @@ class TestSuiteManagement:
         try:
             error_message = unittest_result.errors[0][1]
             error_type, error_content, error_line_info = Utils.parse_error(error_message)
-            self.result.suites[suitename].status = ResultStatus.CRASHED
+            if str(error_content).startswith("Has failed dependency test suite"):
+                self.result.status = ResultStatus.NOT_STARTED
+                self.result.suites[suitename].status = ResultStatus.NOT_STARTED
+                self.logger.error("SuiteDependencyError: "+" - ".join([error_type, error_content, error_line_info]))
+            else:
+                self.result.status = ResultStatus.CRASHED
+                self.result.suites[suitename].status = ResultStatus.CRASHED
+                self.logger.error("CrashError: "+" - ".join([error_type, error_content, error_line_info]))
+                
             for case_name in self.result.suites[suitename].cases:
                 self.result.suites[suitename].cases[case_name].status = ResultStatus.NOT_STARTED
                 self.result.suites[suitename].cases[case_name].statusflag = False
@@ -104,11 +112,9 @@ class TestSuiteManagement:
             self.result.suites[suitename].unknownflag = True
             self.result.statusflag = False
             self.result.unknownflag = True
-            self.result.status = ResultStatus.CRASHED
             self.result.suites[suitename].fail_message={"type":error_type,
                                                         "content":error_content,
                                                         "line_info":error_line_info}
-            self.logger.error("CrashError: "+" - ".join([error_type, error_content, error_line_info]))
             unittest_result.errors = []
         except Exception, e:
             traceback.print_exc()
