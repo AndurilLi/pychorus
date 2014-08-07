@@ -17,7 +17,7 @@ class Formatter:
     ChorusCore = "%(asctime)s - %(name)s - {%(pathname)s:%(lineno)d} - %(levelname)s - %(message)s"
     Script = "%(asctime)s - %(levelname)s - %(message)s - {%pathname)s:%(lineno)d}"
     Request = "-----------------\nREQUEST DETECTED - %(method)s - %(url)s \nREQUEST_HEADERS: %(requestheaders)s \nREQUEST_BODY: %(requestbody)s \
-    \nREQUEST_PARAMETERS: %(requestparameters)s \
+    \nREQUEST_PARAMETERS: %(parameters)s \
     \n\nRESPONSE_STATUS: %(status)s \nRESPONSE_BODY: %(responsebody)s \
     \n\nCall-in IP Address: %(remote_address)s \
     \n-----------------\n"
