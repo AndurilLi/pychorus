@@ -3,7 +3,7 @@ Created on Aug 4, 2014
 
 @author: pli
 '''
-import web, sys, os, optparse, json, base64
+import web, sys, os, optparse, json, base64, traceback
 import Utils
 from LogServer import LogServer, LogType, Formatter
 from SSHHelper import SSHHelper
@@ -169,6 +169,7 @@ class UpdateBaseline(RequestHandler):
             web.ctx.headers = [("Access-Control-Allow-Origin","*")]
             return self.message_helper('Update Successful', "200 OK")
         except Exception, e:
+            traceback.print_exc()
             return self.message_helper("Problem on updating code logic: %s" % str(e), "500 Internal Server Error")
     
     def copy_image(self, suitename, image_name, baseline_paths, output_paths, ci_link):
@@ -212,3 +213,4 @@ def main(argv = sys.argv):
     app = web.application(urls, globals())
     sys.argv[1:] = ["%s" % (str(options.port))]
     app.run()
+    
