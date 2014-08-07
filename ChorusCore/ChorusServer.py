@@ -105,6 +105,7 @@ class UpdateBaseline(RequestHandler):
         os.chdir(Server.workdirectory)
         try:
             data = Utils.get_dict_from_json(rawdata.data)
+            self.request["parameters"] = {"data":str(data)}
             suitename = data["suite_name"]
             svnflag = True if data.get("svnlink") and data.get("comment") else False
             baseline_paths = os.path.split(os.path.join(data["baseline_path"].replace("\\\\","\\"),suitename))
