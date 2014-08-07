@@ -169,9 +169,14 @@ class UpdateBaseline(RequestHandler):
                     return self.message_helper("svn checkin failed %s" % result.stderr, "200 OK")
             web.ctx.headers = [("Access-Control-Allow-Origin","*")]
             return self.message_helper('Update Successful', "200 OK")
-        except Exception, e:
+        except Exception:
+            info = sys.exc_info()
+            err = []
+            for filename, lineno, function, text in traceback.extract_tb(info[2]):
+                err.append(filename + "line:" + lineno + "in" + function)
+                err.append(text)
             traceback.print_exc()
-            return self.message_helper("Problem on updating code logic: %s" % str(e), "500 Internal Server Error")
+            return self.message_helper("Problem on updating code logic:\n %s" % "\n".join(err), "500 Internal Server Error")
     
     def copy_image(self, suitename, image_name, baseline_paths, output_paths, ci_link):
         image_path = Utils.get_filestr(baseline_paths, image_name)
