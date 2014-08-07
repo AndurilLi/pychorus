@@ -115,10 +115,10 @@ class UpdateBaseline(RequestHandler):
                 baseline_path = Utils.get_filestr(baseline_paths)
                 os.chdir(baseline_path)
                 if svnflag:
-                    result = helper.exe_cmd("svn revert -R .",printcmd=False)
+                    result = helper.exe_cmd("svn revert -R . --username=%s --password=%s --force" % (SVNAccount.username, SVNAccount.password), shell=True, printcmd=False)
                     if result.code != 0:
                         return self.message_helper("svn revert failed %s" % result.stderr, "200 OK")
-                    result = helper.exe_cmd("svn up .",printcmd=False)
+                    result = helper.exe_cmd("svn up . --username=%s --password=%s --force" % (SVNAccount.username, SVNAccount.password), shell=True, printcmd=False)
                     if result.code != 0:
                         return self.message_helper("svn update failed %s" % result.stderr, "200 OK")
             else:
@@ -128,13 +128,13 @@ class UpdateBaseline(RequestHandler):
                 baseline_path = os.path.join(work_path, os.path.split(data["baseline_path"].replace("\\\\","\\"))[-1])
                 if os.path.exists(baseline_path):
                     os.chdir(baseline_path)
-                    result = helper.exe_cmd("svn up . --username=%s --password=%s" % (SVNAccount.username, SVNAccount.password),printcmd=False)
+                    result = helper.exe_cmd("svn up . --username=%s --password=%s --force" % (SVNAccount.username, SVNAccount.password), shell=True, printcmd=False)
                     if result.code != 0:
                         return self.message_helper("svn update failed %s" % result.stderr, "200 OK")
                 else:
                     os.mkdir(work_path)
                     os.chdir(work_path)
-                    result = helper.exe_cmd("svn co %s --username=%s --password=%s" % (data["svnlink"],SVNAccount.username, SVNAccount.password),printcmd=False)
+                    result = helper.exe_cmd("svn co %s --username=%s --password=%s --force" % (data["svnlink"],SVNAccount.username, SVNAccount.password), shell=True, printcmd=False)
                     if result.code != 0:
                         return self.message_helper("svn checkout failed %s" % result.stderr, "200 OK")
                     os.chdir(baseline_path)
@@ -160,10 +160,10 @@ class UpdateBaseline(RequestHandler):
                 baseline_caselist[casename][assertionname] = output_caselist[casename][assertionname]
             Utils.dump_dict_to_file(baseline_caselist, baseline_paths, base_filename)
             if svnflag:
-                result = helper.exe_cmd("svn add . --force",printcmd=False)
+                result = helper.exe_cmd("svn add . --force --username=%s --password=%s" % (data["svnlink"],SVNAccount.username, SVNAccount.password), shell=True, printcmd=False)
                 if result.code != 0:
                     return self.message_helper("svn add failed %s" % result.stderr, "200 OK")
-                result = helper.exe_cmd('''svn ci . -m "%s"''' % data["comment"],printcmd=False)
+                result = helper.exe_cmd('''svn ci . -m "%s" --force --username=%s --password=%s''' % (data["comment"],SVNAccount.username, SVNAccount.password), shell=True, printcmd=False)
                 if result.code != 0:
                     return self.message_helper("svn checkin failed %s" % result.stderr, "200 OK")
             web.ctx.headers = [("Access-Control-Allow-Origin","*")]
