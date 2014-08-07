@@ -161,10 +161,10 @@ class UpdateBaseline(RequestHandler):
                 baseline_caselist[casename][assertionname] = output_caselist[casename][assertionname]
             Utils.dump_dict_to_file(baseline_caselist, baseline_paths, base_filename)
             if svnflag:
-                result = helper.exe_cmd("svn add . --force --username=%s --password=%s" % (data["svnlink"],SVNAccount.username, SVNAccount.password), shell=True, printcmd=False)
+                result = helper.exe_cmd("svn add . --force --username=%s --password=%s" % (SVNAccount.username, SVNAccount.password), shell=True, printcmd=False)
                 if result.code != 0:
                     return self.message_helper("svn add failed %s" % result.stderr, "200 OK")
-                result = helper.exe_cmd('''svn ci . -m "%s" --force --username=%s --password=%s''' % (data["comment"],SVNAccount.username, SVNAccount.password), shell=True, printcmd=False)
+                result = helper.exe_cmd('''svn ci . -m "%s" --username=%s --password=%s''' % (data["comment"],SVNAccount.username, SVNAccount.password), shell=True, printcmd=False)
                 if result.code != 0:
                     return self.message_helper("svn checkin failed %s" % result.stderr, "200 OK")
             web.ctx.headers = [("Access-Control-Allow-Origin","*")]
