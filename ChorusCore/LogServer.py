@@ -10,17 +10,18 @@ import Utils
 class LogType:
     ChorusCore = "ChorusCore"
     Script = "Script"
-    MockServer = "MockServer"
     Request = "Request"
-    Response = "Response"
 
 class Formatter:
     Console = "%(levelname)s - %(message)s"
     ChorusCore = "%(asctime)s - %(name)s - {%(pathname)s:%(lineno)d} - %(levelname)s - %(message)s"
     Script = "%(asctime)s - %(levelname)s - %(message)s - {%pathname)s:%(lineno)d}"
-    MockServer = "%(asctime)s - %(name)s - {%(pathname)s:%(lineno)d} - %(levelname)s - %(message)s"
-    Request = "%(url)s \n\t%(method)s \n\t%(headers)s \n\t%(body)s"
-    Response = "%(url)s \n\t%(status)s \n\t%(headers)s \n\t%(body)s"
+    Request = "-----------------\nREQUEST DETECTED - %(method)s - %(url)s \nREQUEST_HEADERS: %(requestheaders)s \nREQUEST_BODY: %(requestbody)s \
+    \nREQUEST_PARAMETERS: %(requestparameters)s \
+    \n\nRESPONSE_STATUS: %(status)s \nRESPONSE_BODY: %(responsebody)s \
+    \n\nCall-in IP Address: %(remote_address)s \
+    \n-----------------\n"
+
     
 class Level:
     notset = logging.NOTSET
