@@ -156,7 +156,7 @@ class UpdateBaseline(RequestHandler):
                 output_caselist = resp.result["data"]
             for baseline in data["baseline"]:
                 casename, assertionname = baseline.split("/")
-                if output_caselist[casename][assertionname].get("image_type"):
+                if type(output_caselist[casename][assertionname])==dict and output_caselist[casename][assertionname].get("image_type"):
                     image_name = output_caselist[casename][assertionname]["image_name"] + "." + output_caselist[casename][assertionname]["image_type"]
                     self.copy_image(suitename, image_name, baseline_paths, output_paths, ci_link)
                 if not baseline_caselist.get(casename):
@@ -178,8 +178,8 @@ class UpdateBaseline(RequestHandler):
             info = sys.exc_info()
             err = []
             for filename, lineno, function, text in traceback.extract_tb(info[2]):
-                err.append(filename + "line:" + lineno + "in" + function)
-                err.append(text)
+                err.append(filename + "line:" + str(lineno) + "in" + str(function))
+                err.append(str(text))
             traceback.print_exc()
             return self.message_helper("Problem on updating code logic:\n %s" % "\n".join(err), "500 Internal Server Error")
     
