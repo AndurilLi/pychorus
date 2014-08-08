@@ -310,7 +310,7 @@ def round_sig(x, sig = 3):
     except:
         return 0
     
-def qr_decode(element=None, image_filepath=None, parse_url="http://zxing.org/w/decode"):
+def qr_decode_deprecated(element=None, image_filepath=None, parse_url="http://zxing.org/w/decode"):
     from APIManagement import Request,RequestMode
     try:
         if element:
@@ -332,6 +332,32 @@ def qr_decode(element=None, image_filepath=None, parse_url="http://zxing.org/w/d
         traceback.print_exc()
         print "Decode QRCode meets error %s" % str(e)
         return False
+
+def qr_decode(element=None, image_filepath=None, parse_url="http://chorusserver.labs.microstrategy.com:8765/qr_decode"):
+    from APIManagement import Request,RequestMode
+    try:
+        if element:
+            element.get_screenshot_as_file("temp_code.png")
+            filepath = "temp_code.png"
+        elif image_filepath:
+            filepath = image_filepath
+        else:
+            print "No input value"
+            return False
+        req = Request(base_url=parse_url, method="POST", mode=RequestMode.multi_form,
+                      upload_files={"f":filepath})
+        req.send()
+        if element:
+            os.remove(filepath)
+        if req.result["status"] == "200":
+            return req.result["data"]
+        else:
+            print "QRDecode Server Error: %s" % req.result["data"]
+    except Exception, e:
+        traceback.print_exc()
+        print "Decode QRCode meets error %s" % str(e)
+    return qr_decode_deprecated(element, image_filepath)
+
 
 def get_svninfo():
     from SSHHelper import SSHHelper

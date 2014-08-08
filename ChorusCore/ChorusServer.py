@@ -3,7 +3,7 @@ Created on Aug 4, 2014
 
 @author: pli
 '''
-import web, sys, os, optparse, json, base64, traceback
+import web, sys, os, optparse, json, base64, traceback, hashlib
 import Utils
 from LogServer import LogServer, LogType, Formatter
 from SSHHelper import SSHHelper
@@ -203,14 +203,34 @@ class UpdateBaseline(RequestHandler):
             new_image_path = Utils.get_filestr(output_paths, image_name)
             Utils.copy_to_file(new_image_path, image_path)
     
-class QRDecode:
+class QRDecode(RequestHandler):
     def POST(self):
-        #TODO
+        rawdata = web.input(f={})
+        imagename = rawdata.f.filename.replace("\\","/").split("/")[-1]
+        extentname = os.path.splitext(imagename)
+        imagedata = rawdata.f.file.read()
+        self.get_request()
+        self.request["requestbody"] = {"filename": rawdata.f.filename}
         os.chdir(Server.workdirectory)
-        rawdata = web.input(f="")
-        print rawdata
-        return '{"status":"OK"}'
-
+        hashname = hashlib.sha224(str(self.request["requestheaders"])+self.request["remote_address"]).hexdigest()
+        filename = self.generate_filename(hashname)+extentname[1]
+        imagefile = open(filename, "wb")
+        imagefile.write(imagedata)
+        imagefile.close()
+        sshhelper = SSHHelper("localhost")
+        data = sshhelper.exe_cmd("zbarimg --raw -q %s" % filename, shell=True, printcmd=False)
+        os.remove(filename)
+        if data.code==0:
+            return self.message_helper(data.stdout, "200 OK")
+        else:
+            return self.message_helper(data.stderr, "500 Internal Server Error")
+    
+    def generate_filename(self, hashname, length=6):
+        if os.path.isfile(hashname[-length:]):
+            return self.generate_filename(hashname, length+1)
+        else:
+            return hashname[-length:]
+    
 def main(argv = sys.argv):
     parser = optparse.OptionParser()
     parser.add_option("--port", dest="port", default="8765", help="Chorus Server Port")
