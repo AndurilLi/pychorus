@@ -286,13 +286,15 @@ class Request:
         else:
             body = self.realbody
         try:
-            reqbody = json.dumps(body)
+            json.dumps(body)
+            reqbody = body
         except:
             reqbody = base64.b64decode(body)
         try:
-            respbody = json.dumps(self.response.data)
+            json.dumps(self.response.data)
+            respbody = self.response.data
         except:
-            respbody = json.dumps(self.response.data)
+            respbody = base64.b64decode(self.response.data)
         return json.dumps({
                                 "url": self.response.url,
                                 "method" : self.method,
