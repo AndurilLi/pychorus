@@ -477,7 +477,7 @@
 	        		url = baseurl + path + "?data=" + encodeURIComponent(content);
 	        		link = document.getElementById("update_baseline");
 	        		link.innerHTML = "Update Remote Baseline in SVN";
-	        		link.style="display:block";
+	        		link.style.display="block";
 	        		link.href = url;
 				}
 				function update_baselines_local(){
@@ -506,7 +506,7 @@
 	        		content = JSON.stringify(data);
 	        		url = baseurl + path + "?data=" + encodeURIComponent(content);
 	        		link = document.getElementById("update_baseline");
-	        		link.style="display:block";
+	        		link.style.display="block";
 	        		link.href = url;
 	        		if (document.getElementById("svnlink")){
 	        			link.innerHTML = "Update Local Baseline in SVN";
