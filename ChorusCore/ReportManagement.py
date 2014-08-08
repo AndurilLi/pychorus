@@ -128,8 +128,9 @@ class ReportManagement:
                            "baseline_path": os.path.abspath(Utils.get_filestr(self.baseline_path)).replace("\\","\\\\")
                            }
         self.logger.info("Getting svn info for update baseline...")
-        svninfo = Utils.get_svninfo()
-        self.updateinfo["svn_baseline_link"] = svninfo + "/" + "/".join(self.baseline_path) if svninfo else None
+        svnflag, svninfo = Utils.get_svninfo()
+        self.updateinfo["svn_message"] = None if svnflag else svninfo
+        self.updateinfo["svn_baseline_link"] = svninfo + "/" + "/".join(self.baseline_path) if svnflag else ""
         if os.environ.has_key("BUILD_URL"):
             self.updateinfo["ci_link"] = os.environ["BUILD_URL"] + "HTML_Report"
         config = ChorusGlobals.get_configinfo()

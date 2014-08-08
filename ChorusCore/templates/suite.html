@@ -433,10 +433,11 @@
 			</style>
 	    	<script type="text/javascript">
 				var protocol = window.location.protocol;
-				{% if bsinfo.svn_baseline_link %}
-					document.write('<div><div class="textalign">SVN Link: </div><input type="text" id="svnlink" value="{{ bsinfo.svn_baseline_link }}" size="100"></div><br>');
-					document.write('<div><div class="textalign">SVN Comments: </div><input type="text" id="comment" placeholder="Enter svn checkin comments" size="100"></div><br>');
+				{% if bsinfo.svn_message %}
+					document.write('<div><div class="textalign">SVN Message: </div><span class="red"> {{ bsinfo.svn_message }} </span></div><br><br>');
 				{% endif %}
+				document.write('<div><div class="textalign">SVN Link: </div><input type="text" id="svnlink" value="{{ bsinfo.svn_baseline_link }}" size="100"></div><br>');
+				document.write('<div><div class="textalign">SVN Comments: </div><input type="text" id="comment" placeholder="Enter svn checkin comments" size="100" value=""></div><br>');
 				document.write('<div><div class="textalign">Output Path: </div><input type="text" id="output_path" value="{{ bsinfo.output_path }}" size="100"></div><br>');
 				document.write('<div><div class="textalign">Baseline Path: </div><input type="text" id="baseline_path" value="{{ bsinfo.baseline_path }}" size="100"></div><br>');
 				if (protocol == "http:" || protocol == "https:"){

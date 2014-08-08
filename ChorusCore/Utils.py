@@ -340,14 +340,16 @@ def get_svninfo():
         result = ssh.exe_cmd("svn info", shell=True)
     except Exception, e:
         traceback.print_exc()
-        print "svn get failed with error %s" % str(e)
-        return None
+        message = "svn get failed with error %s" % str(e)
+        print message
+        return (False, message.replace("'","\\'"))
     if result.code == 0:
         print "Getting svn info success"
         for line in result.stdout.split("\n"):
             if line.startswith("URL: "):
-                return line.split("URL: ")[1].strip()
+                return (True, line.split("URL: ")[1].strip())
     else:
-        print "Getting svn info failed %s" % result.stderr
-        return None
+        message = "Getting svn info failed %s" % result.stderr
+        print message
+        return (False, message.replace("'","\\'"))
     

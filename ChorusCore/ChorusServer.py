@@ -108,6 +108,8 @@ class UpdateBaseline(RequestHandler):
             self.request["parameters"] = {"data":str(data)}
             suitename = data["suite_name"]
             svnflag = True if data.get("svnlink") and data.get("comment") else False
+            if not svnflag and data.get("ci_link"):
+                return self.message_helper("Please input svn link and comment", "200 OK")
             baseline_paths = os.path.split(os.path.join(data["baseline_path"].replace("\\\\","\\"),suitename))
             output_paths = os.path.split(os.path.join(data["output_path"].replace("\\\\","\\"), suitename))
             helper = SSHHelper("localhost")
@@ -116,10 +118,10 @@ class UpdateBaseline(RequestHandler):
                 baseline_path = Utils.get_filestr(baseline_paths)
                 os.chdir(baseline_path)
                 if svnflag:
-                    result = helper.exe_cmd("svn revert -R . --username=%s --password=%s --force" % (SVNAccount.username, SVNAccount.password), shell=True, printcmd=False)
+                    result = helper.exe_cmd(self.generate_svn_command("svn revert -R . --no-auth-cache"), shell=True, printcmd=False)
                     if result.code != 0:
                         return self.message_helper("svn revert failed %s" % result.stderr, "200 OK")
-                    result = helper.exe_cmd("svn up . --username=%s --password=%s --force" % (SVNAccount.username, SVNAccount.password), shell=True, printcmd=False)
+                    result = helper.exe_cmd(self.generate_svn_command("svn up . --no-auth-cache"), shell=True, printcmd=False)
                     if result.code != 0:
                         return self.message_helper("svn update failed %s" % result.stderr, "200 OK")
             else:
@@ -129,14 +131,14 @@ class UpdateBaseline(RequestHandler):
                 baseline_path = os.path.join(work_path, os.path.split(data["baseline_path"].replace("\\\\","\\"))[-1])
                 if os.path.exists(baseline_path):
                     os.chdir(baseline_path)
-                    result = helper.exe_cmd("svn up . --username=%s --password=%s --force" % (SVNAccount.username, SVNAccount.password), shell=True, printcmd=False)
+                    result = helper.exe_cmd(self.generate_svn_command("svn up . --no-auth-cache"), shell=True, printcmd=False)
                     if result.code != 0:
                         return self.message_helper("svn update failed %s" % result.stderr, "200 OK")
                 else:
                     if not os.path.exists(work_path):
                         os.mkdir(work_path)
                     os.chdir(work_path)
-                    result = helper.exe_cmd("svn co %s --username=%s --password=%s --force" % (data["svnlink"],SVNAccount.username, SVNAccount.password), shell=True, printcmd=False)
+                    result = helper.exe_cmd(self.generate_svn_command("svn co %s --no-auth-cache" % data["svnlink"]), shell=True, printcmd=False)
                     if result.code != 0:
                         return self.message_helper("svn checkout failed %s" % result.stderr, "200 OK")
                     os.chdir(baseline_path)
@@ -161,15 +163,17 @@ class UpdateBaseline(RequestHandler):
                     baseline_caselist[casename] = {}
                 baseline_caselist[casename][assertionname] = output_caselist[casename][assertionname]
             Utils.dump_dict_to_file(baseline_caselist, baseline_paths, base_filename)
+            web.ctx.headers = [("Access-Control-Allow-Origin","*")]
             if svnflag:
-                result = helper.exe_cmd("svn add . --force --username=%s --password=%s" % (SVNAccount.username, SVNAccount.password), shell=True, printcmd=False)
+                result = helper.exe_cmd(self.generate_svn_command("svn add . --no-auth-cache --force"), shell=True, printcmd=False)
                 if result.code != 0:
                     return self.message_helper("svn add failed %s" % result.stderr, "200 OK")
-                result = helper.exe_cmd('''svn ci . -m "%s" --username=%s --password=%s''' % (data["comment"],SVNAccount.username, SVNAccount.password), shell=True, printcmd=False)
+                result = helper.exe_cmd(self.generate_svn_command('''svn ci . -m "%s" --no-auth-cache''' % data["comment"]), shell=True, printcmd=False)
                 if result.code != 0:
                     return self.message_helper("svn checkin failed %s" % result.stderr, "200 OK")
-            web.ctx.headers = [("Access-Control-Allow-Origin","*")]
-            return self.message_helper('Update Successful', "200 OK")
+                return self.message_helper('Update Successful in svn', "200 OK")
+            else:
+                return self.message_helper('Update Successful in local without checkin', "200 OK")
         except Exception:
             info = sys.exc_info()
             err = []
@@ -178,6 +182,11 @@ class UpdateBaseline(RequestHandler):
                 err.append(text)
             traceback.print_exc()
             return self.message_helper("Problem on updating code logic:\n %s" % "\n".join(err), "500 Internal Server Error")
+    
+    def generate_svn_command(self, cmd):
+        if SVNAccount.username and SVNAccount.password:
+            cmd = cmd + " --username=%s --password=%s" % (SVNAccount.username, SVNAccount.password)
+        return cmd
     
     def copy_image(self, suitename, image_name, baseline_paths, output_paths, ci_link):
         image_path = Utils.get_filestr(baseline_paths, image_name)
@@ -204,9 +213,9 @@ class QRDecode:
 
 def main(argv = sys.argv):
     parser = optparse.OptionParser()
-    parser.add_option("--port", dest="port", default="8080", help="Chorus Server Port")
-    parser.add_option("-u", "--username", dest="username", help="svn username")
-    parser.add_option("-p", "--password", dest="password", help="svn password")
+    parser.add_option("--port", dest="port", default="8765", help="Chorus Server Port")
+    parser.add_option("-u", "--username", dest="username", default=None, help="svn username")
+    parser.add_option("-p", "--password", dest="password", default=None, help="svn password")
     parser.add_option("-o", "--output", dest="output", default="",
                       help="an output folder to handle svn project and save log file")
     options, argv = parser.parse_args(list(argv))
