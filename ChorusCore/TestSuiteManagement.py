@@ -194,11 +194,11 @@ class TestSuiteManagement:
             candidate_suite = self.non_add_list.pop(0)
             print "pop %s"%(candidate_suite)
             self.get_pre_order_suite(candidate_suite)
-        list = []
+        l = []
         for s in self.suite_list:
-            if not s in list:
-                list.append(s)
-        return list
+            if not s in l:
+                l.append(s)
+        return l
 
     def get_pre_order_suite(self, candidate_suite):
         if self.suite_dependency_mapping.has_key(candidate_suite):
