@@ -3,7 +3,7 @@ Created on May 13, 2013
 
 @author: mxu, modified by Anduril
 '''
-import httplib2, urllib, json,time
+import httplib2, urllib, json,time, base64
 import Utils
 import copy,os
 import importlib
@@ -285,17 +285,25 @@ class Request:
                     }
         else:
             body = self.realbody
-        return {
-                    "url": self.response.url,
-                    "method" : self.method,
-                    "request_parameters" : self.parameters,
-                    "request_headers" : self.headers,
-                    "request_body":  body,
-                    "response_headers": self.response.headers,
-                    "response_body": self.response.data,
-                    "response_status": self.response.status,
-                    "time_taken": self.time_taken
-                }
+        try:
+            reqbody = json.dumps(body)
+        except:
+            reqbody = base64.b64decode(body)
+        try:
+            respbody = json.dumps(self.response.data)
+        except:
+            respbody = json.dumps(self.response.data)
+        return json.dumps({
+                                "url": self.response.url,
+                                "method" : self.method,
+                                "request_parameters" : self.parameters,
+                                "request_headers" : self.headers,
+                                "request_body":  reqbody,
+                                "response_headers": self.response.headers,
+                                "response_body": respbody,
+                                "response_status": self.response.status,
+                                "time_taken": self.time_taken
+                            })
  
 class Response:
     '''Provide a class to handle response'''
