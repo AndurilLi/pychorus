@@ -116,6 +116,7 @@ class VerificationManagement:
         if assertion_result.baseline_status:
             self.compare_checkpoint(tsobj, assertion_result)
         else:
+            self.generate_checkpoint(tsobj, assertion_result)
             case_result.baseline_status = False
             self.result.suites[suite_name].baseline_status = False
             self.result.baseline_status = False
@@ -153,6 +154,25 @@ class VerificationManagement:
                 self.logger.info("Assertion '%s' passed" % assertion_name)
             else:
                 self.logger.info("Assertion '%s' baseline generated" % assertion_name)
+    
+    def generate_checkpoint(self, tsobj, assertion_result):
+        if assertion_result.cptype == TYPES.Image:
+            content = assertion_result.current
+            image_filename = content["image_name"]+"."+content["image_type"]
+            thumb_filename = content["image_name"]+"_thumbnail"+"."+content["image_type"]
+            image_filepath = Utils.get_filestr(self.suite_output_path, image_filename)
+            thumb_filepath = Utils.get_filestr(self.suite_output_path, thumb_filename)
+            im_base=Image.open(image_filepath).convert('RGBA')
+            assertion_result.similarity = 100
+            self.make_thumbfile(im_base, thumb_filepath)
+            assertion_result.detail = {
+                                        "basethumb": os.path.join(self.suite_name, thumb_filename),
+                                        "basevalue": os.path.join(self.suite_name, image_filename),
+                                        "realthumb": os.path.join(self.suite_name, thumb_filename),
+                                        "realvalue": os.path.join(self.suite_name, image_filename)
+                                       }
+        else:
+            assertion_result.detail["basevalue"] = assertion_result.detail["realvalue"]
     
     def compare_checkpoint(self, tsobj, assertion_result): 
         if assertion_result.cptype == TYPES.Image:

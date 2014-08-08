@@ -39,8 +39,12 @@ def create_folder(folderpath, foldername, refreshflag=True):
         newfolder = os.path.join(folderpath,foldername)
         if os.path.isdir(newfolder):
             if refreshflag:
-                remove_path(newfolder)
-                os.makedirs(newfolder)
+                try:
+                    remove_path(newfolder)
+                    os.makedirs(newfolder)
+                except:
+                    for filename in os.listdir(newfolder):
+                        os.remove(os.path.join(newfolder, filename))
         else:
             os.makedirs(newfolder)
     else:
