@@ -295,17 +295,27 @@ class Request:
             respbody = self.response.data
         except:
             respbody = base64.b64decode(self.response.data)
-        return json.dumps({
+        try:
+            api = {
+                        "url": self.response.url,
+                        "method" : self.method,
+                        "request_parameters" : self.parameters,
+                        "request_headers" : self.headers,
+                        "request_body":  reqbody,
+                        "response_headers": self.response.headers,
+                        "response_body": respbody,
+                        "response_status": self.response.status,
+                        "time_taken": self.time_taken
+                    }
+            return json.dumps(api)
+        except:
+            self.logger.error("json dumps error %s" % str(api))
+            return json.dumps({
                                 "url": self.response.url,
                                 "method" : self.method,
                                 "request_parameters" : self.parameters,
-                                "request_headers" : self.headers,
-                                "request_body":  reqbody,
-                                "response_headers": self.response.headers,
-                                "response_body": respbody,
-                                "response_status": self.response.status,
                                 "time_taken": self.time_taken
-                            })
+                               })
  
 class Response:
     '''Provide a class to handle response'''

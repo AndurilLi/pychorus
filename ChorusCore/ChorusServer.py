@@ -8,7 +8,7 @@ import Utils
 from LogServer import LogServer, LogType, Formatter
 from SSHHelper import SSHHelper
 from APIManagement import Request
-
+from ChorusCore import ChorusGlobals
 class SVNAccount:
     username = None
     password = None
@@ -34,6 +34,7 @@ class Server:
         cls.msgserver = LogServer()
         cls.msgserver.add_filehandler(filepath=cls.workdirectory, filename="Server.log")
         cls.msglogger = cls.msgserver.get_logger()
+        ChorusGlobals.set_logger(cls.msglogger)
         cls.reqserver = LogServer(name = LogType.Request, formatter=Formatter.Request)
         cls.reqserver.add_filehandler(formatter=Formatter.Request, filepath=cls.workdirectory, filename="Request.log")
         cls.reqlogger = cls.reqserver.get_logger()
