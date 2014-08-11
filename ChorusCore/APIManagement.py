@@ -289,33 +289,24 @@ class Request:
             json.dumps(body)
             reqbody = body
         except:
-            reqbody = base64.b64decode(body)
+            reqbody = base64.b64encode(body)
         try:
             json.dumps(self.response.data)
             respbody = self.response.data
         except:
-            respbody = base64.b64decode(self.response.data)
-        try:
-            api = {
-                        "url": self.response.url,
-                        "method" : self.method,
-                        "request_parameters" : self.parameters,
-                        "request_headers" : self.headers,
-                        "request_body":  reqbody,
-                        "response_headers": self.response.headers,
-                        "response_body": respbody,
-                        "response_status": self.response.status,
-                        "time_taken": self.time_taken
-                    }
-            return json.dumps(api)
-        except:
-            self.logger.error("json dumps error %s" % str(api))
-            return json.dumps({
-                                "url": self.response.url,
-                                "method" : self.method,
-                                "request_parameters" : self.parameters,
-                                "time_taken": self.time_taken
-                               })
+            respbody = base64.b64encode(self.response.data)
+        api = {
+                    "url": self.response.url,
+                    "method" : self.method,
+                    "request_parameters" : self.parameters,
+                    "request_headers" : self.headers,
+                    "request_body":  reqbody,
+                    "response_headers": self.response.headers,
+                    "response_body": respbody,
+                    "response_status": self.response.status,
+                    "time_taken": self.time_taken
+                }
+        return json.dumps(api)
  
 class Response:
     '''Provide a class to handle response'''
