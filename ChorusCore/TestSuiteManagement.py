@@ -343,9 +343,12 @@ class TestSuiteManagement:
                     raise Exception("Cannot import suite %s in folder %s with error %s" % (suite_name,self.TESTSUITE_FOLDER,str(e)))
                 if case_dict:
                     case_list = []
-                    for case in case_dict[suite_name].methods:
-                        if case[0:4] == 'test':
-                            case_list.append(case)
+                    if case_dict.get(suite_name):
+                        for case in case_dict[suite_name].methods:
+                            if case[0:4] == 'test':
+                                case_list.append(case)
+                    else:
+                        self.logger.error("Suite %s has different class name and suite filename, please modify it immediately" % suite_name)
                     suites_dict[suite_name]=case_list
         self.raw_suite_dict = Utils.create_entity(suites_dict)
         if not suites_dict:
