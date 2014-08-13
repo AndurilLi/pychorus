@@ -29,12 +29,16 @@ class SSHHelper:
     def check_ip(self, ip):
         '''Check remote IP address, if it's local, then change ip to localhost, and mark remoteflag to False'''
         import socket
-        local_name = socket.gethostname()
-        local_ip = socket.gethostbyname(local_name)
-        if ip.find(local_name) == 0:
-            ip = ip.replace(local_name, "localhost")
-        elif ip.find(local_ip) == 0:
-            ip = ip.replace(local_ip, "localhost")
+        try:
+            local_ip = socket.gethostbyname(ip)
+            if local_ip.find("127.0.0.1") == 0:
+                ip = "localhost"
+            hostname = socket.gethostname()
+            local_ip = socket.gethostbyname(hostname)
+            if ip.lower() == hostname.lower() or ip == local_ip:
+                ip = "localhost"
+        except socket.gaierror:
+            print "Get local host name %s error" % hostname
         self.ip = ip
         self.remote_flag = True if self.ip.find("localhost")!=0 else False
     
