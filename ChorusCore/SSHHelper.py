@@ -171,14 +171,20 @@ class Local_Blocking_Session(threading.Thread):
     def stop(self, cmd=None):
         '''cmd not use, just keep same as Remote mode'''
         import psutil
-        psutil.Process(self.session.pid).get_children()[0].kill()
-        if sys.platform.startswith("win"):
-            os.system("taskkill /f /im adb.exe")
+        thread = psutil.Process(self.session.pid)
+        self.kill_children_recursion(thread)
         self.session.kill()
         self.join()
         if self.filehandler:
             self.filehandler.close()
-
+    
+    def kill_children_recursion(self, thread):
+        child_threads = thread.get_children()
+        thread.kill()
+        if len(child_threads):
+            for child_thread in child_threads:
+                self.kill_children_recursion(child_thread)
+        
 class SSH_Blocking_Session(threading.Thread):
     def __init__(self, ssh, cmd, logfilepath=None):
         threading.Thread.__init__(self)
