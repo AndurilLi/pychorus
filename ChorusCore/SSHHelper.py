@@ -155,7 +155,7 @@ class Local_Blocking_Session(threading.Thread):
         threading.Thread.__init__(self)
         self.cmd = cmd
         self.filehandler = open(logfilepath,"wb") if logfilepath else None
-        self.shelltype = True if sys.platform.find("win")==0 else False
+        self.shelltype = True if (sys.platform.startswith("win") or sys.platform.startswith("darwin")) else False
         
     def run(self):
         self.session = Popen(self.cmd,shell=self.shelltype, stdin=PIPE,stdout=PIPE,stderr=STDOUT)
