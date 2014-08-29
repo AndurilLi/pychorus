@@ -243,9 +243,11 @@ class VerificationManagement:
             filename = Utils.get_filestr(self.suite_output_path,tsobj._testMethodName + "_"+ name+"."+imagetype)
             '''make sure the driver has related functions'''
             if elements or coordinates:
-                driver.get_screenshot_without_items(filename, elements, coordinates)
+                status = driver.get_screenshot_without_items(filename, elements, coordinates)
             else:
-                driver.get_screenshot_as_file(filename)
+                status = driver.get_screenshot_as_file(filename)
+            if not status:
+                raise Exception("Capture ScreenShot Error in driver")
         except Exception, e:
             traceback.print_exc()
             self.logger.error("Cannot save image with error %s" % str(e))
@@ -256,9 +258,11 @@ class VerificationManagement:
             filename = Utils.get_filestr(self.suite_output_path,tsobj._testMethodName + "_"+ name+"."+imagetype)
             '''make sure the driver has related functions'''
             if target or exclusion:
-                driver.get_elementshot_without_items(filename, target, exclusion, iframe_loc)
+                status = driver.get_elementshot_without_items(filename, target, exclusion, iframe_loc)
             else:
-                driver.get_screenshot_as_file(filename)
+                status = driver.get_screenshot_as_file(filename)
+            if not status:
+                raise Exception("Capture ScreenShot Error in driver")
         except Exception, e:
             traceback.print_exc()
             self.logger.error("Cannot save image with error %s" % str(e))
