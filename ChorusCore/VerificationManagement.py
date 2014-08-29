@@ -166,10 +166,10 @@ class VerificationManagement:
             assertion_result.similarity = 100
             self.make_thumbfile(im_base, thumb_filepath)
             assertion_result.detail = {
-                                        "basethumb": os.path.join(self.suite_name, thumb_filename),
-                                        "basevalue": os.path.join(self.suite_name, image_filename),
-                                        "realthumb": os.path.join(self.suite_name, thumb_filename),
-                                        "realvalue": os.path.join(self.suite_name, image_filename)
+                                        "basethumb": "/".join([self.suite_name, thumb_filename]),
+                                        "basevalue": "/".join([self.suite_name, image_filename]),
+                                        "realthumb": "/".join([self.suite_name, thumb_filename]),
+                                        "realvalue": "/".join([self.suite_name, image_filename])
                                        }
         else:
             assertion_result.detail["basevalue"] = assertion_result.detail["realvalue"]
@@ -200,10 +200,10 @@ class VerificationManagement:
         self.make_thumbfile(im_base, base_thumbfilename)
         self.make_thumbfile(im_real, real_thumbfilename)
         assertion_result.detail = {
-                                    "basethumb": os.path.join(self.suite_name, content["image_name"]+"_base"+"_thumbnail"+"."+content["image_type"]),
-                                    "basevalue": os.path.join(self.suite_name, content["image_name"]+"_base"+"."+content["image_type"]),
-                                    "realthumb": os.path.join(self.suite_name, content["image_name"]+"_thumbnail"+"."+content["image_type"]),
-                                    "realvalue": os.path.join(self.suite_name, content["image_name"]+"."+content["image_type"])
+                                    "basethumb": "/".join([self.suite_name, content["image_name"]+"_base"+"_thumbnail"+"."+content["image_type"]]),
+                                    "basevalue": "/".join([self.suite_name, content["image_name"]+"_base"+"."+content["image_type"]]),
+                                    "realthumb": "/".join([self.suite_name, content["image_name"]+"_thumbnail"+"."+content["image_type"]]),
+                                    "realvalue": "/".join([self.suite_name, content["image_name"]+"."+content["image_type"]])
                                    }
         if assertion_result.similarity < assertion_result.logic:
             assertion_result.status = ResultStatus.FAILED
