@@ -1,12 +1,9 @@
 # pychorus
 
-A test framework for mobile, web and server integration test
+A test framework for mobile, web and server integration test, the old version is created by mzxu, refactored by myself.
 
 ## Installation
-
-```
->>pip install ChorusCore
-```
+python setup.py install
 
 ## Create a project
 
