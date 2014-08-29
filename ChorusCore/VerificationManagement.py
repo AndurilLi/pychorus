@@ -213,8 +213,8 @@ class VerificationManagement:
             im_diff = Image.open(diff_filename)
             diff_thumbfilename = Utils.get_filestr(self.suite_output_path,content["image_name"]+"_diff"+"_thumbnail"+"."+content["image_type"])
             self.make_thumbfile(im_diff, diff_thumbfilename)
-            assertion_result.detail["diffthumb"] = os.path.join(self.suite_name, content["image_name"]+"_diff"+"_thumbnail"+"."+content["image_type"])
-            assertion_result.detail["diffvalue"] = os.path.join(self.suite_name, content["image_name"]+"_diff"+"."+content["image_type"])
+            assertion_result.detail["diffthumb"] = "/".join([self.suite_name, content["image_name"]+"_diff"+"_thumbnail"+"."+content["image_type"]])
+            assertion_result.detail["diffvalue"] = "/".join([self.suite_name, content["image_name"]+"_diff"+"."+content["image_type"]])
     
     def special_compare(self, assertion_result):
         if assertion_result.logic == 'UnEqual' and assertion_result.baseline == assertion_result.current:
